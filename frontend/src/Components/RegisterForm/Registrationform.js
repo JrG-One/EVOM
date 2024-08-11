@@ -31,7 +31,7 @@ const SignupComponent = ({ signIn }) => {
     try {
       const response = await axios.post('https://interview-whiz-backend.vercel.app/api/signup', formData);
       console.log('User signed up successfully:', response.data);
-      navigate('/login');
+      
     } catch (error) {
       if (error.response && error.response.status === 400 && error.response.data.message === 'User already exists') {
         alert('Email already exists. Please use a different email.');
@@ -46,8 +46,7 @@ const SignupComponent = ({ signIn }) => {
     try {
       const response = await axios.post('https://interview-whiz-backend.vercel.app/api/login', formData);
       console.log('User logged in successfully:', response.data);
-      login();
-      navigate('/') 
+      
     } catch (error) {
       if (error.response && error.response.status === 404 && error.response.data.message === 'User not found') {
         alert('Email not found. Please sign up first.');
@@ -63,8 +62,11 @@ const SignupComponent = ({ signIn }) => {
     event.preventDefault();
     if (signIn) {
       handleLogin();
+      login();
+      navigate('/') 
     } else {
       handleSignUp();
+      navigate('/login');
     }
   };  
 
