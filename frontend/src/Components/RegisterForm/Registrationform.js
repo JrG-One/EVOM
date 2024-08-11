@@ -11,9 +11,9 @@ const SignupComponent = ({ signIn }) => {
   // Function to toggle between sign-in and sign-up parts
   const toggleSign = () => {
     if (signIn) {
-      navigate('/register'); // Navigate to /register if toggling to sign-up
+      navigate('/register');
     } else {
-      navigate('/login'); // Navigate to /login if toggling to sign-in
+      navigate('/login');
     }
   };
 
@@ -29,7 +29,7 @@ const SignupComponent = ({ signIn }) => {
 
   const handleSignUp = async () => {
     try {
-      const response = await axios.post('https://interview-whiz-backend.vercel.app/api/signup', formData);
+      const response = await axios.post('http://ec2-3-110-29-65.ap-south-1.compute.amazonaws.com/api/signup', formData);
       console.log('User signed up successfully:', response.data);
       
     } catch (error) {
@@ -44,7 +44,7 @@ const SignupComponent = ({ signIn }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('https://interview-whiz-backend.vercel.app/api/login', formData);
+      const response = await axios.post('http://ec2-3-110-29-65.ap-south-1.compute.amazonaws.com/api/login', formData);
       console.log('User logged in successfully:', response.data);
       
     } catch (error) {

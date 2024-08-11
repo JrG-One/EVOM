@@ -23,6 +23,7 @@ const Navbar = () => {
       <div className="right">
         <Link to="/">Home</Link>
         <Link to="/interview-portal">Portal</Link>
+        <Link to="/interview-portal">Resume</Link>
         <Link to="/resource">Resources</Link>
         {isLoggedIn ? (
           <Link onClick={handleLogout} to="/login">Sign Out</Link> // Render sign-out button if user is logged in
