@@ -16,6 +16,7 @@ import FAQ from "./Components/FAQ/FAQ";
 import Footer from "./Components/Footer/Footer";
 import InterviewWhizTerminal from "./Components/Terminal/Terminal";
 import SignupComponent from "./Components/RegisterForm/Registrationform";
+import CompanySignup from './Components/CompanyRegister/CompanyRegistration'
 import Resources from "./Components/Resources/Resources";
 import AboutUs from "./Components/AboutUs/AboutUs";
 import InterviewPage from "./Components/PromptSection/PromptSection";
@@ -120,6 +121,16 @@ const App = () => {
                 <>
                   <Navbar />
                   <SignupComponent signIn={false} />
+                  <Footer className="fixed-footer" />
+                </>
+              }
+            />
+            <Route
+              path="/company-register"
+              element={
+                <>
+                  <Navbar />
+                  <CompanySignup signIn={false} />
                   <Footer className="fixed-footer" />
                 </>
               }
