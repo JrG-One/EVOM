@@ -11,9 +11,9 @@ const SignupComponent = ({ CompanysignIn }) => {
   // Function to toggle between sign-in and sign-up parts
   const toggleSign = () => {
     if (CompanysignIn) {
-      navigate('/register');
+      navigate('/company-login');
     } else {
-      navigate('/login');
+      navigate('/company-register');
     }
   };
 
@@ -69,7 +69,7 @@ const SignupComponent = ({ CompanysignIn }) => {
       navigate('/') 
     } else {
       handleSignUp();
-      navigate('/login');
+      navigate('/company-login');
     }
   };  
 
@@ -94,7 +94,7 @@ const SignupComponent = ({ CompanysignIn }) => {
             <Components.Input type='text' placeholder='Owner Name' name="Ownername" onChange={handleInputChange} />
             <Components.Input type='text' placeholder='Company Sector' name="Companysector" onChange={handleInputChange} />
             <Components.Input type='text' placeholder='Employer Name' name="Employername" onChange={handleInputChange} />
-            <Components.Input type='email' placeholder='Email' name="Employeremail" onChange={handleInputChange} />
+            <Components.Input type='email' placeholder='Employer Email' name="Employeremail" onChange={handleInputChange} />
             <Components.Input type='password' placeholder='Password' name="password" onChange={handleInputChange} />
             <Components.Button onClick={handleFormSubmit}>Sign Up</Components.Button>
           </Components.Form>

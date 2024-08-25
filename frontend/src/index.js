@@ -126,6 +126,16 @@ const App = () => {
               }
             />
             <Route
+              path="/company-login"
+              element={
+                <>
+                  <Navbar />
+                  <CompanySignup signIn={true} />
+                  <Footer className="fixed-footer" />
+                </>
+              }
+            />
+            <Route
               path="/company-register"
               element={
                 <>
