@@ -130,7 +130,7 @@ const App = () => {
               element={
                 <>
                   <Navbar />
-                  <CompanySignup signIn={true} />
+                  <CompanySignup CompanysignIn={true} />
                   <Footer className="fixed-footer" />
                 </>
               }
@@ -140,7 +140,7 @@ const App = () => {
               element={
                 <>
                   <Navbar />
-                  <CompanySignup signIn={false} />
+                  <CompanySignup CompanysignIn={false} />
                   <Footer className="fixed-footer" />
                 </>
               }
