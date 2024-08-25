@@ -5,7 +5,7 @@ import reportWebVitals from "./reportWebVitals";
 import {
   BrowserRouter as Router,
   Route,
-  Routes
+  Routes,
 } from "react-router-dom";
 import { Parallax } from "react-parallax";
 import Navbar from "./Components/Navbar/Navbar";
@@ -16,43 +16,41 @@ import FAQ from "./Components/FAQ/FAQ";
 import Footer from "./Components/Footer/Footer";
 import InterviewWhizTerminal from "./Components/Terminal/Terminal";
 import SignupComponent from "./Components/RegisterForm/Registrationform";
-import CompanySignup from './Components/CompanyRegister/CompanyRegistration'
+import CompanySignup from "./Components/CompanyRegister/CompanyRegistration";
 import Resources from "./Components/Resources/Resources";
 import AboutUs from "./Components/AboutUs/AboutUs";
 import InterviewPage from "./Components/PromptSection/PromptSection";
-import { AuthProvider } from "./authContext"; // Import AuthProvider
-import { faTruckMedical } from "@fortawesome/free-solid-svg-icons";
+import { AuthProvider } from "./authContext"; // AuthProvider import
+// Removed unused faTruckMedical import
 
 const App = () => {
   const [userData, setUserData] = useState({
-    name: '',
-    company: '',
-    role: '',
-    experience: '', 
-    language: '',
+    name: "",
+    company: "",
+    role: "",
+    experience: "",
+    language: "",
   });
 
   useEffect(() => {
     // Function to handle storage event
     const handleStorageChange = (event) => {
-      if (event.key === 'userData') {
-        // Update userData state with the new value from local storage
+      if (event.key === "userData") {
         setUserData(JSON.parse(event.newValue));
       }
     };
 
     // Listen for storage events
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+
     // Retrieve userData from local storage on component mount
-    const storedUserData = localStorage.getItem('userData');
+    const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
       setUserData(JSON.parse(storedUserData));
     }
 
-    // Cleanup function
     return () => {
-      // Remove the storage event listener on component unmount
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
@@ -71,7 +69,8 @@ const App = () => {
                     style={{
                       height: "auto",
                       overflow: "hidden",
-                      background: "linear-gradient(to right, #1a1a1a, #000033)",
+                      background:
+                        "linear-gradient(to right, #1a1a1a, #000033)",
                     }}
                   >
                     <div>
@@ -160,14 +159,15 @@ const App = () => {
               element={
                 <>
                   <Navbar />
-                  <InterviewPage 
-                  name= {userData.name}
-                  targetCompany={userData.company}
-                  experience={userData.experience}
-                  role={userData.role}
-                  preferredLanguage={userData.language}
-                  isCoding={true}
-                />
+                  <InterviewPage
+                    name={userData.name}
+                    targetCompany={userData.company}
+                    experience={userData.experience}
+                    role={userData.role}
+                    preferredLanguage={userData.language}
+                    isCoding={true}
+                  />
+                  <Footer className="fixed-footer" />
                 </>
               }
             />
