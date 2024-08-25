@@ -20,6 +20,7 @@ import Resources from "./Components/Resources/Resources";
 import AboutUs from "./Components/AboutUs/AboutUs";
 import InterviewPage from "./Components/PromptSection/PromptSection";
 import { AuthProvider } from "./authContext"; // Import AuthProvider
+import { faTruckMedical } from "@fortawesome/free-solid-svg-icons";
 
 const App = () => {
   const [userData, setUserData] = useState({
@@ -144,6 +145,7 @@ const App = () => {
                   experience={userData.experience}
                   role={userData.role}
                   preferredLanguage={userData.language}
+                  isCoding={true}
                 />
                 </>
               }

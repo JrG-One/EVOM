@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import CircumIcon from "@klarr-agency/circum-icons-react"; // React
+import CircumIcon from "@klarr-agency/circum-icons-react";
 import { RiRobot3Fill } from "react-icons/ri";
 import { PiCheckSquareOffsetFill, PiStudentFill } from "react-icons/pi";
 import { VscFeedback } from "react-icons/vsc";
-import Lottie from "react-lottie"; // Import Lottie
+import Lottie from "react-lottie";
 import loadingAnimation from "../../loadingAnimation.json";
-import feedbackAnimation from "../../feedbackAnimation.json"; // Import your loading animati
+import feedbackAnimation from "../../feedbackAnimation.json";
 import "./PromptSection.css";
 import jsPDF from "jspdf";
 
@@ -99,7 +99,7 @@ const InterviewPage = ({
 
       let prompt = "";
       if (isCoding) {
-        prompt = `We are interviewing a candidate for a ${jobRole} position with ${yearsOfExperience} years of experience in ${preferredLanguage} programming. 
+        prompt = `We are interviewing a candidate for a ${jobRole} position at ${targetCompany} with ${yearsOfExperience} years of experience in ${preferredLanguage} programming. 
         As the interviewer, what would be a good ${preferredLanguage} programming question of medium level to ask them to assess their coding skills and problem-solving abilities in the context of data structures and algorithms. Ensure that the questions prioritize topics such as trees, graphs, dynamic programming, and linked lists.? 
         **[Important] Provide response starting from question, test cases, and constraints in ${preferredLanguage} for a coding problem to assess understanding of problem solving. No explanations or interview dialogue.**`;
       } else {
