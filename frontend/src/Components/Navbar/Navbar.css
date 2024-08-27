@@ -14,8 +14,7 @@ nav {
   display: flex;
   justify-content: space-between;
   background-color: #282c34; /* Dark background color */
-  padding: 10px;
-  padding-left: 30px;
+  padding: 10px 30px; /* Adjusted padding for left and right */
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
   width: 100%; /* Ensure the nav takes 100% of its parent's width */
 }
@@ -28,7 +27,7 @@ nav {
 
 .logo {
   font-size: 20px;
-  color: #ffffff; /* Blue color for title */
+  color: #ffffff; /* White color for the logo */
   cursor: pointer;
   padding-top: 10px;
 }
@@ -36,17 +35,15 @@ nav {
 .right {
   display: flex;
   align-items: center; /* Align items vertically in the right section */
-  gap: 50px;
-  padding-top: 10px;
+  gap: 20px; /* Adjusted gap between links */
 }
 
 a, span {
   cursor: pointer;
   padding: 5px 10px;
-  margin-right: 10px;
-  color: #ffffff; /* Light gray color for text */
+  color: #ffffff; /* White color for text */
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px; /* Adjusted font size for better readability */
   text-decoration: none; /* Remove underline from links */
 }
 

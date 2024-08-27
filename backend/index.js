@@ -4,12 +4,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const connectDB = require('./db');
 const authRoutes = require('./authRoutes');
-
+const companyRoutes = require('./companyRoutes');
 const app = express();
 app.use(cors());
 app.options('*', cors())
 app.use(bodyParser.json()); 
-app.use('/api', authRoutes); 
+app.use('/api', authRoutes, companyRoutes); 
 
 // Connect to MongoDB Atlas
 connectDB();
