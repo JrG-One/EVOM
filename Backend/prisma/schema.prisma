@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String
+  email     String   @unique
+  password  String
+  profilePic String? @default("")
+  isAdmin   Boolean  @default(false)
+  resumeUrl String?
+  atsScore  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  interviews Interview[]
+}
+
+model Interview {
+  id               String   @id @default(uuid())
+  company          String
+  role             String
+  experience       String
+  preferredLanguage String
+  codingRound      Boolean  @default(false)
+  pdfReport        String?  @default("No File")
+  score            Float    @default(0)
+  createdAt        DateTime @default(now())
+  
+  // Storing questions as JSON to be flexible with structure
+  questions        Json?    
+
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+}
+
+model Resource {
+  id          String @id @default(uuid())
+  title       String
+  description String
+  thumbnail   String
+  link        String
+}
