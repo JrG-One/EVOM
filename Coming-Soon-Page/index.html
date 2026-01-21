@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVOM - EnterVue of Minds</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030303;
+            --primary-purple: #8B5CF6;
+            --primary-purple-glow: rgba(139, 92, 246, 0.3);
+            --text-main: #FFFFFF;
+            --text-dim: #94A3B8;
+            --accent-orange: #F97316;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .mesh-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.15) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(253, 16%, 7%, 1) 0, transparent 50%);
+            filter: blur(80px);
+            opacity: 0.8;
+        }
+
+        .glow-sphere {
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, var(--primary-purple-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(100px);
+            animation: move 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(-20%, -20%);
+            }
+
+            to {
+                transform: translate(20%, 20%);
+            }
+        }
+
+        /* Branding */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo-box {
+            background: linear-gradient(135deg, var(--primary-purple), #6366F1);
+            padding: 0.75rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4);
+        }
+
+        .brand-name {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .full-name {
+            color: var(--primary-purple);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        /* Hero Section */
+        .content-wrapper {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #FFFFFF 60%, rgba(255, 255, 255, 0.4));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .tagline {
+            color: var(--text-dim);
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            font-weight: 400;
+            margin-bottom: 2rem;
+            font-family: 'Inter', sans-serif;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .subheadline {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 3.5rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        /* Call to Action */
+        .waitlist-container {
+            width: 100%;
+            max-width: 500px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .waitlist-form {
+            display: flex;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 8px;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .waitlist-form:focus-within {
+            border-color: rgba(139, 92, 246, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            padding: 1rem 1.5rem;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            flex-grow: 1;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input::placeholder {
+            color: #64748B;
+        }
+
+        button {
+            background: white;
+            color: black;
+            border: none;
+            padding: 0 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+        }
+
+        button:hover {
+            background: #F1F5F9;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Support Badges */
+        .support-section {
+            margin-top: 5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+
+        .support-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: #475569;
+            font-weight: 700;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .badge {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.6rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .badge.ssip {
+            border-color: rgba(249, 115, 22, 0.2);
+        }
+
+        .dot {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+        }
+
+        .dot.orange {
+            background-color: var(--accent-orange);
+            box-shadow: 0 0 10px var(--accent-orange);
+        }
+
+        .dot.purple {
+            background-color: var(--primary-purple);
+            box-shadow: 0 0 10px var(--primary-purple);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Success message/Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #10B981;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1.5rem;
+            }
+
+            .waitlist-form {
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px;
+                background: transparent;
+                border: none;
+                backdrop-filter: none;
+                box-shadow: none;
+            }
+
+            .waitlist-form input {
+                background: var(--glass-bg);
+                border: 1px solid var(--glass-border);
+                border-radius: 12px;
+                backdrop-filter: blur(12px);
+                width: 100%;
+            }
+
+            .waitlist-form button {
+                padding: 1rem;
+                width: 100%;
+                height: 55px;
+            }
+
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            .toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mesh-gradient"></div>
+    <div class="glow-sphere"></div>
+
+    <div class="content-wrapper">
+        <div class="logo-container">
+            <div class="brand-name">EVOM</div>
+        </div>
+        <div class="full-name">EnterVue of Minds</div>
+
+        <h1>Automate Hiring.<br>Elevate Careers.</h1>
+        <div class="tagline">A peek inside thinking pattern and problem solving</div>
+
+        <p class="subheadline">
+            An end-to-end AI hiring ecosystem designed to automate recruitment for companies while providing a
+            personalized support system for students to master their professional potential.
+        </p>
+
+        <div class="waitlist-container">
+            <form id="waitlist-form" action="https://formspree.io/f/mwvvyaqz" method="POST" class="waitlist-form">
+                <input type="email" name="email" placeholder="Enter your email address" required>
+                <button type="submit">Join Waitlist</button>
+            </form>
+        </div>
+
+        <div class="support-section">
+            <div class="support-label">Backed & supported by</div>
+            <div class="badges">
+                <div class="badge"><span class="dot purple"></span>IIIT Surat</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-icon">✓</div>
+        Successfully joined! We'll be in touch soon.
+    </div>
+
+    <script>
+        const form = document.getElementById('waitlist-form');
+        const toast = document.getElementById('toast');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = new FormData(form);
+            const button = form.querySelector('button');
+
+            // Show loading state
+            button.disabled = true;
+            button.innerText = 'Joining...';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Show Toast
+                    toast.classList.add('show');
+                    form.reset();
+
+                    // Optional: Reset button after delay
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        button.disabled = false;
+                        button.innerText = 'Join Waitlist';
+                    }, 5000);
+                } else {
+                    const result = await response.json();
+                    alert(result.errors ? result.errors.map(error => error.message).join(", ") : "Oops! Problem submitting form");
+                    button.disabled = false;
+                    button.innerText = 'Join Waitlist';
+                }
+            } catch (error) {
+                alert("Oops! Problem submitting form");
+                button.disabled = false;
+                button.innerText = 'Join Waitlist';
+            }
+        };
+    </script>
+</body>
+
+</html>
