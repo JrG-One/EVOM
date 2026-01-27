@@ -1,8 +1,8 @@
 import React from 'react';
 import { Twitter, Linkedin, Github, Mail } from 'lucide-react';
 const Footer = () => {
-    return (
-      <div>
+  return (
+    <div>
       <footer className="bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -10,12 +10,12 @@ const Footer = () => {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center mb-4">
                 <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">MX</span>
+                  <span className="text-white font-bold text-xl">EV</span>
                 </div>
-                <span className="ml-3 font-bold text-xl text-white">InterviewWhiz</span>
+                <span className="ml-3 font-bold text-xl text-white">Entervue</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                InterviewWhiz helps professionals prepare for interviews with AI-powered practice sessions and personalized feedback.
+                Entervue helps professionals prepare for interviews with AI-powered practice sessions and personalized feedback.
               </p>
               <div className="flex space-x-4">
                 <a href="#" className="text-gray-400 hover:text-white transition">
@@ -32,7 +32,7 @@ const Footer = () => {
                 </a>
               </div>
             </div>
-            
+
             {/* Quick Links */}
             <div>
               <h3 className="font-bold text-lg mb-4">Quick Links</h3>
@@ -85,10 +85,10 @@ const Footer = () => {
                     Testimonials
                   </a>
                 </li>
-                
+
               </ul>
             </div>
-            
+
             {/* Resources */}
             <div>
               <h3 className="font-bold text-lg mb-4">Resources</h3>
@@ -99,14 +99,14 @@ const Footer = () => {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
-            <p>&copy; {new Date().getFullYear()} InterviewWhiz. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Entervue. All rights reserved.</p>
           </div>
         </div>
       </footer>
-      </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default Footer;
+export default Footer;

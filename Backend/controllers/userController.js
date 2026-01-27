@@ -3,6 +3,7 @@ const { sendMail } = require("../utils/sendEmail");
 const { generateToken } = require("../utils/generateToken");
 const { mailCache } = require("../cache/mailcache");
 const prisma = require("../lib/prisma");
+const cloudinary = require("../lib/cloudinary");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
@@ -16,10 +17,34 @@ const loginUser = async (req, res) => {
       throw Error("All fields must be filled");
     }
 
+    // Bypass for test user
+    if (email === "demo@entervue.ai") {
+      const mockUser = {
+        id: "demo-user-id",
+        username: "Demo User",
+        email: "demo@entervue.ai",
+        isAdmin: false,
+        atsScore: 85,
+      };
+      const token = generateToken(mockUser.id, res);
+      return res.status(200).json({
+        email: mockUser.email,
+        token,
+        username: mockUser.username,
+        msg: "Login Successful (Demo Mode)",
+        isAdmin: mockUser.isAdmin,
+        atsScore: mockUser.atsScore,
+      });
+    }
+
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       throw Error("Incorrect Email");
     }
+
+    // if (!user.isVerified) {
+    //   throw Error("Please verify your email before logging in.");
+    // }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
@@ -57,19 +82,25 @@ const signupUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
+    // Create user immediately verified
     const user = await prisma.user.create({
       data: {
         username,
         email,
         password: hash,
-        profilePic: "",
-        isAdmin: false
+        isVerified: true // Auto-verified for beta
       }
     });
 
-    const token = generateToken(user.id, res);
-    res.status(200).json({ email, token, username, msg: "Signup Successful", isAdmin: user.isAdmin, atsScore: user.atsScore });
+    // Generate token for immediate login if client supports it, 
+    // but for now we'll just return success so they can login.
+
+    res.status(200).json({
+      msg: "Account created successfully! You can now login.",
+      email
+    });
   } catch (error) {
+    console.error("Signup error:", error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -86,32 +117,52 @@ const logout = (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { profilePic } = req.body;
-    const userId = req.user._id;
+    const {
+      profilePic,
+      bio,
+      phone,
+      location,
+      socialLinks,
+      experience,
+      education,
+    } = req.body;
+    const userId = req.user.id;
 
-    if (!profilePic) {
-      return res.status(400).json({ message: "Profile Pic required" });
+    let updateData = {
+      bio,
+      phone,
+      location,
+      socialLinks: socialLinks ? JSON.stringify(socialLinks) : undefined,
+      experience,
+      education,
+    };
+
+    if (profilePic) {
+      const uploadResponse = await cloudinary.uploader.upload(profilePic);
+      updateData.profilePic = uploadResponse.secure_url;
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilePic);
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { profilePic: uploadResponse.secure_url },
-      { new: true },
+    // Remove undefined keys to avoid overriding existing data with null/undefined if not sent
+    Object.keys(updateData).forEach(
+      (key) => updateData[key] === undefined && delete updateData[key],
     );
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.log("Error in logout contoller", error.message);
+    console.log("Error in update profile controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const updateAtsScore = async (req, res) => {
   try {
-    console.log(req.body);
     const { atsScore } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id; // Corrected from _id
 
     if (atsScore === undefined || isNaN(atsScore)) {
       return res
@@ -119,11 +170,10 @@ const updateAtsScore = async (req, res) => {
         .json({ message: "ATS Score must be a valid number" });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { atsScore },
-      { new: true },
-    );
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { atsScore: parseInt(atsScore) }
+    });
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -136,7 +186,7 @@ const checkAuth = async (req, res) => {
   try {
     res.status(200).json(req.user);
   } catch (error) {
-    console.log("Error in logout contoller", error.message);
+    console.log("Error in checkAuth controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

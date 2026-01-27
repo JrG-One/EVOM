@@ -23,7 +23,7 @@ const normalizeLanguage = (lang) => {
 
 const CodeEditorWindow = () => {
   const { formData, sendMessage } = useInterviewStore();
-  const rawLang = formData?.prefferedLanguage || "python";
+  const rawLang = formData?.preferredLanguage || "python";
   const language = normalizeLanguage(rawLang);
 
   const [code, setCode] = useState(BOILERPLATES[language] || BOILERPLATES.python);

@@ -28,7 +28,7 @@ const generatePDFReport = async (reportText, score, formData = {}, topicScores =
     role = "N/A",
     company = "N/A",
     experience = "N/A",
-    prefferedLanguage = "N/A",
+    preferredLanguage = "N/A",
     codingRound = false,
   } = formData;
 
@@ -55,7 +55,7 @@ const generatePDFReport = async (reportText, score, formData = {}, topicScores =
     `Role: ${role}`,
     `Company: ${company}`,
     `Experience: ${experience} year(s)`,
-    `Preferred Language: ${prefferedLanguage}`,
+    `Preferred Language: ${preferredLanguage}`,
     `Interview Type: ${codingRound ? "Technical" : "Behavioural"}`,
   ];
 
@@ -159,7 +159,7 @@ const generatePDFReport = async (reportText, score, formData = {}, topicScores =
   doc.text("Best Wishes for your Interview", xPos, 100);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
-  doc.text("– InterviewWhiz Team", xPos, 115);
+  doc.text("– Entervue Team", xPos, 115);
 
   // === SAVE PDF ===
   const arrayBuffer = doc.output("arraybuffer");

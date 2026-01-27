@@ -2,17 +2,17 @@ const prisma = require("../lib/prisma");
 
 const postInterviewData = async (req, res) => {
   try {
-    const { company, role, experience, prefferedLanguage, codingRound } = req.body;
+    const { company, role, experience, preferredLanguage, codingRound } = req.body;
 
     // Correct the typo when saving to DB if schema has fixed spelling
-    // Schema has 'preferredLanguage', body has 'prefferedLanguage'
+    // Schema has 'preferredLanguage', body has 'preferredLanguage'
 
     const newInterview = await prisma.interview.create({
       data: {
         company,
         role,
         experience,
-        preferredLanguage: prefferedLanguage, // Mapping input (typo) to Schema (correct)
+        preferredLanguage, // Matching input to Schema
         codingRound: codingRound || false,
         user: {
           connect: { id: req.user.id }

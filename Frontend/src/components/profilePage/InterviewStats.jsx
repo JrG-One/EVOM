@@ -22,107 +22,111 @@ const InterviewStats = ({ interviews }) => {
     };
   });
 
-  const averageScore = interviews.reduce((sum, interview) => sum + interview.score*10, 0) / interviews.length;
-  const highestScore = Math.max(...interviews.map(interview => interview.score*10));
+  const averageScore = interviews.reduce((sum, interview) => sum + interview.score * 10, 0) / (interviews.length || 1);
+  const highestScore = Math.max(...interviews.map(interview => interview.score * 10), 0);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Mock Interview Statistics</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <Card className="bg-green-50">
-            <CardContent>
-              <p className="text-sm text-gray-600">Average Score</p>
-              <p className="text-2xl font-bold text-gray-800">{averageScore.toFixed(1)}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-purple-50">
-            <CardContent>
-              <p className="text-sm text-gray-600">Highest Score</p>
-              <p className="text-2xl font-bold text-gray-800">{highestScore}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-blue-50">
-            <CardContent>
-              <p className="text-sm text-gray-600">Total Interviews</p>
-              <p className="text-2xl font-bold text-gray-800">{interviews.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-yellow-50">
-            <CardContent>
-              <p className="text-sm text-gray-600">Last Interview</p>
-              <p className="text-2xl font-bold text-gray-800">
-                {interviews[interviews.length - 1]?.score*10 || "-"}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+    <div className="space-y-8">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-emerald-500/10 border-emerald-500/20 backdrop-blur-xl">
+          <CardContent className="p-6">
+            <p className="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-1">Average Score</p>
+            <p className="text-3xl font-black text-white">{averageScore.toFixed(1)}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-purple-500/10 border-purple-500/20 backdrop-blur-xl">
+          <CardContent className="p-6">
+            <p className="text-sm font-bold text-purple-400 uppercase tracking-wider mb-1">Highest Score</p>
+            <p className="text-3xl font-black text-white">{highestScore}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-blue-500/10 border-blue-500/20 backdrop-blur-xl">
+          <CardContent className="p-6">
+            <p className="text-sm font-bold text-blue-400 uppercase tracking-wider mb-1">Total Interviews</p>
+            <p className="text-3xl font-black text-white">{interviews.length}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-amber-500/10 border-amber-500/20 backdrop-blur-xl">
+          <CardContent className="p-6">
+            <p className="text-sm font-bold text-amber-400 uppercase tracking-wider mb-1">Last Score</p>
+            <p className="text-3xl font-black text-white">
+              {interviews.length > 0 ? interviews[interviews.length - 1].score * 10 : "-"}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-        <h3 className="text-lg font-medium text-gray-700 mb-4">Progress Over Time</h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis domain={[0, 10]} />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="score" stroke="#3b82f6" activeDot={{ r: 8 }} strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Chart Section */}
+        <Card className="lg:col-span-2 bg-white/[0.02] border-white/5 backdrop-blur-xl rounded-[1.5rem] overflow-hidden">
+          <CardHeader className="border-b border-white/5 pb-4">
+            <CardTitle className="text-lg font-bold text-white tracking-wide">Progress Over Time</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis domain={[0, 100]} stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: "#111", borderColor: "#333", borderRadius: "8px", color: "#fff" }}
+                    itemStyle={{ color: "#fff" }}
+                  />
+                  <Legend wrapperStyle={{ paddingTop: "20px" }} />
+                  <Line
+                    type="monotone"
+                    dataKey={(data) => data.score * 10}
+                    name="Score"
+                    stroke="#8b5cf6"
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: "#8b5cf6", strokeWidth: 0 }}
+                    activeDot={{ r: 8 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="mt-6">
-          <h3 className="text-lg font-medium text-gray-700 mb-2">Recent Interviews</h3>
-          <div className="overflow-auto max-h-48">
+        {/* Recent List (Simplified Table) */}
+        <Card className="bg-white/[0.02] border-white/5 backdrop-blur-xl rounded-[1.5rem] overflow-hidden flex flex-col">
+          <CardHeader className="border-b border-white/5 pb-4">
+            <CardTitle className="text-lg font-bold text-white tracking-wide">Recent Activity</CardTitle>
+          </CardHeader>
+          <div className="flex-1 overflow-auto max-h-[400px]">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>SnO.</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Report</TableHead>
+                <TableRow className="border-white/5 hover:bg-transparent">
+                  <TableHead className="text-gray-400 font-bold uppercase text-xs w-[100px]">Date</TableHead>
+                  <TableHead className="text-gray-400 font-bold uppercase text-xs">Role</TableHead>
+                  <TableHead className="text-gray-400 font-bold uppercase text-xs text-right">Score</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {chartData.slice().reverse().map((interview, index) => (
-                  <TableRow key={interview._id || index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{interview.date}</TableCell>
-                    <TableCell>{interview.time}</TableCell>
-                    <TableCell>{interview.company}</TableCell>
-                    <TableCell>{interview.position}</TableCell>
+                  <TableRow key={interview.id || index} className="border-white/5 hover:bg-white/[0.03] transition-colors">
+                    <TableCell className="text-gray-400 text-xs font-medium">{interview.date}</TableCell>
                     <TableCell>
-                      <Badge
-                        className={
-                          interview.score >= 80
-                            ? "bg-green-500"
-                            : interview.score >= 70
-                            ? "bg-blue-500"
-                            : interview.score >= 60
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
-                        }
-                      >
-                        {interview.score*10}
-                      </Badge>
+                      <div className="font-semibold text-white text-sm">{interview.role}</div>
+                      <div className="text-xs text-gray-500">{interview.company}</div>
                     </TableCell>
-                    <TableCell>
-                    <Button onClick={() => window.open(interview.pdfReport, "_blank")}>{interview.actions}</Button>
+                    <TableCell className="text-right">
+                      <span className={`font-bold ${interview.score * 10 >= 80 ? "text-emerald-400" :
+                          interview.score * 10 >= 60 ? "text-amber-400" : "text-red-400"
+                        }`}>
+                        {interview.score * 10}
+                      </span>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </Card>
+      </div>
+    </div>
   );
 };
 

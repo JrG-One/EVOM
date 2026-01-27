@@ -15,6 +15,13 @@ export const useAuthStore = create((set, get) => ({
 
   checkAuth: async () => {
     set({ isCheckingAuth: true });
+    // Check for demo user first
+    const demoUser = localStorage.getItem("demo-user");
+    if (demoUser) {
+      set({ authUser: JSON.parse(demoUser), isCheckingAuth: false });
+      return;
+    }
+
     try {
       const res = await axiosInstance.get("/user/check");
       set({ authUser: res.data });
@@ -31,7 +38,7 @@ export const useAuthStore = create((set, get) => ({
     console.log("data in signup:", data);
     try {
       await axiosInstance.post("/user/signup", data);
-      toast("Mail Successfully sent");
+      toast("Account created! You can now login.");
     } catch (error) {
       console.log("Error in signup:", error.message);
       toast(error.response.data.error || "Signup failed");
@@ -43,12 +50,29 @@ export const useAuthStore = create((set, get) => ({
   login: async (data) => {
     set({ isLoggingIn: true });
 
+    // Frontend Bypass for Demo User
+    if (data.email === "demo@entervue.ai") {
+      const mockUser = {
+        _id: "demo-id",
+        username: "Demo User",
+        email: "demo@entervue.ai",
+        profilePic: "",
+        atsScore: 85,
+        isAdmin: false,
+      };
+      set({ authUser: mockUser });
+      localStorage.setItem("demo-user", JSON.stringify(mockUser));
+      toast("Logged in as Demo User");
+      set({ isLoggingIn: false });
+      return;
+    }
+
     try {
       const res = await axiosInstance.post("/user/login", data);
       set({ authUser: res.data });
       toast("Logged in successfully");
     } catch (error) {
-      toast(error.response.data.error || "Login failed");
+      toast(error.response?.data?.error || "Login failed");
     } finally {
       set({ isLoggingIn: false });
     }
@@ -56,12 +80,15 @@ export const useAuthStore = create((set, get) => ({
 
   logout: async () => {
     try {
+      localStorage.removeItem("demo-user"); // Clear demo session
       await axiosInstance.post("/user/logout");
       set({ authUser: null });
       toast("Logged out successfully");
       get().disconnectSocket();
     } catch (error) {
-      toast({ title: error.response.data.error, variant: "destructive" });
+      // Even if backend fails, clear local state
+      set({ authUser: null });
+      toast("Logged out successfully");
     }
   },
 

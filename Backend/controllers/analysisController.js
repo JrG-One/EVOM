@@ -9,7 +9,7 @@ const { cleanMarkdown } = require("../utils/cleanMarkdown");
 exports.generateAnalysis = async (req, res) => {
   try {
     const { feedback, interviewId, formData } = req.body;
-    const { name, role, company, experience, prefferedLanguage, codingRound } =
+    const { name, role, company, experience, preferredLanguage, codingRound } =
       formData || {};
 
     const systemContext =

@@ -12,72 +12,82 @@ const InterviewHeader = ({
   interviewShouldEnd,
   warnings = 0,
   isFullscreen = false,
-  onEnterFullscreen
+  onEnterFullscreen,
+  onExitFullscreen,
 }) => {
   const navigate = useNavigate();
+
+  const handleEndInterview = async () => {
+    try {
+      if (onExitFullscreen) {
+        await onExitFullscreen();
+      }
+      await endInterview();
+      navigate('/portal');
+    } catch (error) {
+      console.error("Error ending interview:", error);
+      navigate('/portal');
+    }
+  };
+
   return (
-    <header className="p-4 border-b flex justify-between items-center bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/60">
-      <div className="flex items-center gap-2">
-        <h1 className="text-xl font-semibold">Interview Session</h1>
-        {warnings > 0 ? (
-          <Badge variant="destructive" className="ml-2 animate-pulse">
-            Warnings: {warnings}
-          </Badge>
-        ) : (
-          <Badge variant="outline" className="ml-2">In Progress</Badge>
-        )}
+    <header className="sticky top-0 z-50 p-4 border-b border-white/10 backdrop-blur-xl bg-[#030303]/80 flex justify-between items-center text-white">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+          <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+            Interview Session
+          </h1>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-2">
+          {warnings > 0 ? (
+            <Badge variant="destructive" className="bg-red-500/10 text-red-400 border-red-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold">
+              Warnings: {warnings}
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="border-emerald-500/20 text-emerald-400 bg-emerald-500/5 px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold">
+              Secure Environment
+            </Badge>
+          )}
+        </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex items-center gap-3">
         {!isFullscreen && (
           <Button
             onClick={onEnterFullscreen}
-            variant="outline"
-            className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950"
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white hover:bg-white/5 rounded-xl px-4 transition-all"
           >
             <Maximize className="w-4 h-4 mr-2" />
-            Enter Fullscreen
+            <span className="text-xs font-semibold">Fullscreen</span>
           </Button>
         )}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={generateNewQuestion}
-                disabled={!nextQuestionReady}
-                variant={nextQuestionReady ? "default" : "outline"}
-                className="transition-all duration-300"
-              >
-                Next Question
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            {/* <TooltipContent>
-              {nextQuestionReady 
-                ? "Move to the next interview question" 
-                : "Please complete the current question first"}
-            </TooltipContent> */}
-          </Tooltip>
-        </TooltipProvider>
 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                onClick={() => endInterview(navigate('/'))}
+                onClick={handleEndInterview}
                 disabled={!interviewShouldEnd}
-                variant={interviewShouldEnd ? "destructive" : "outline"}
-                className="transition-all duration-300"
+                variant="ghost"
+                size="sm"
+                className={`rounded-xl px-4 font-bold text-xs uppercase tracking-wider transition-all duration-500 ${interviewShouldEnd
+                  ? "bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20"
+                  : "text-white/20 cursor-not-allowed opacity-50"
+                  }`}
               >
                 End Interview
-                <CircleX className="ml-1 h-4 w-4" />
+                <CircleX className="ml-2 h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            {/* <TooltipContent>
-              {interviewShouldEnd 
-                ? "Complete the interview and view results" 
-                : "Please complete all required questions first"}
-            </TooltipContent> */}
+            {!interviewShouldEnd && (
+              <TooltipContent className="bg-[#1a1a1a] border-white/10 text-gray-400 text-xs shadow-2xl">
+                The interview is still in progress
+              </TooltipContent>
+            )}
           </Tooltip>
         </TooltipProvider>
       </div>

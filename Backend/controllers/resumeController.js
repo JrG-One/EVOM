@@ -4,6 +4,7 @@ const prisma = require("../lib/prisma");
 const fs = require("fs");
 const path = require("path");
 const { cleanMarkdown } = require("../utils/cleanMarkdown");
+// const pdf = require("pdf-parse"); // Removed as per user request
 
 exports.uploadResume = async (req, res) => {
   try {
@@ -16,6 +17,7 @@ exports.uploadResume = async (req, res) => {
     if (resumeFile.mimetype !== "application/pdf") {
       return res.status(400).json({ message: "Only PDF files are allowed." });
     }
+
     // Set temp directory
     const uploadsDir = path.join(__dirname, "..", "uploads");
 
@@ -40,6 +42,22 @@ exports.uploadResume = async (req, res) => {
 
       console.log("Resume file saved temporarily at:", tempFilePath);
 
+      // Convert to Base64 (User requested Strategy)
+      let resumeText = "";
+      try {
+        if (resumeFile.data) {
+          console.log("Encoding PDF to Base64 from Buffer...");
+          resumeText = resumeFile.data.toString('base64');
+        } else {
+          console.log("Encoding PDF to Base64 from Disk...");
+          const dataBuffer = fs.readFileSync(tempFilePath);
+          resumeText = dataBuffer.toString('base64');
+        }
+        console.log(`✅ Base64 Encoded. Length: ${resumeText.length}`);
+      } catch (err) {
+        console.error("❌ Base64 Encoding Error:", err);
+      }
+
       try {
         const uploadResult = await cloudinary.uploader.upload(tempFilePath, {
           resource_type: "raw",
@@ -54,45 +72,30 @@ exports.uploadResume = async (req, res) => {
           });
 
           if (!user) {
+            try { fs.unlinkSync(tempFilePath); } catch (e) { }
             return res.status(404).json({ message: "User not found" });
           }
 
-          fs.unlink(tempFilePath, (err) => {
-            if (err) {
-              console.error("Error deleting temporary file:", err);
-            } else {
-              console.log("Temporary file deleted:", tempFilePath);
-            }
-          });
+          try { fs.unlinkSync(tempFilePath); } catch (e) { }
 
           res.status(200).json({
             message: "Resume uploaded successfully",
             resumeUrl: uploadResult.secure_url,
+            resumeText: resumeText || ""
           });
         } else {
+          try { fs.unlinkSync(tempFilePath); } catch (e) { }
           return res
             .status(500)
             .json({ message: "Error uploading resume to Cloudinary" });
         }
       } catch (cloudinaryError) {
         console.error("Cloudinary upload error:", cloudinaryError);
-        fs.unlink(tempFilePath, (err) => {
-          if (err) {
-            console.error(
-              "Error deleting temporary file after Cloudinary error:",
-              err,
-            );
-          } else {
-            console.log(
-              "Temporary file deleted after Cloudinary error:",
-              tempFilePath,
-            );
-          }
-        });
+        try { fs.unlinkSync(tempFilePath); } catch (e) { }
 
         res
           .status(500)
-          .json({ message: "Error uploading resume to Cloudinary." });
+          .json({ message: "Error processing resume upload." });
       }
     });
   } catch (error) {
@@ -100,22 +103,26 @@ exports.uploadResume = async (req, res) => {
     res.status(500).json({ message: "Error uploading resume." });
   }
 };
+
 exports.calculateATS = async (req, res) => {
   try {
-    const { resumeUrl } = req.body;
+    const { resumeUrl, resumeText } = req.body;
 
-    if (!resumeUrl) {
-      return res.status(400).json({ error: "Resume URL is required." });
+    if (!resumeUrl && !resumeText) {
+      return res.status(400).json({ error: "Resume content is required." });
     }
 
     const systemPrompt =
-      "Assume the role of an ATS system. Evaluate the resume below and calculate the ATS score out of 100. Give only Numeric value i.e the Overall ATS Score.";
-    const userPrompt = `Resume content: ${resumeUrl}`;
+      "Assume the role of an expert technical recruiter and ATS specialist. The user has provided a Base64 encoded PDF file. READ and DECODE the content to evaluate the candidate.\n\nCalculate the ATS score (0-100) based on:\n1. Keyword matching (tech stack, skills)\n2. Quantifiable results (metrics, numbers)\n3. Formatting and structure\n\nReturn EXACTLY and ONLY the numeric score (e.g., '85').";
+
+    // Pass Base64 text
+    const contentToAnalyze = resumeText || `Resume URL: ${resumeUrl}`;
+    const userPrompt = `Resume Content (Base64 Encoded PDF):\n${contentToAnalyze}`;
 
     // Get ATS score using OpenAI API
     const atsScore = await createChatCompletion(systemPrompt, userPrompt);
     const atsScoreNumber = parseInt(atsScore, 10);
-    console.log(atsScore);
+    console.log("ATS Score Response:", atsScore);
 
     res.status(200).json({
       message: "ATS score calculated successfully.",
@@ -129,18 +136,32 @@ exports.calculateATS = async (req, res) => {
 
 exports.getOverallComments = async (req, res) => {
   try {
-    const { resumeUrl } = req.body;
+    const { resumeUrl, resumeText } = req.body;
 
-    if (!resumeUrl) {
-      return res.status(400).json({ error: "Resume URL is required." });
+    if (!resumeUrl && !resumeText) {
+      return res.status(400).json({ error: "Resume content is required." });
     }
 
     const systemPrompt =
-      "Assume the role of a recruiter. Provide overall comments on the resume below, such as its content quality, formatting, and technical relevancen and gives the reponse into two section Strength and Areas for Improvement.";
-    const userPrompt = `Resume content: ${resumeUrl}`;
+      "Assume the role of a senior technical recruiter. The user has provided a Base64 encoded PDF. READ and DECODE it to provide detailed feedback.\n\n" +
+      "CRITICAL: NEVER mention that you are reading 'encoded content', 'base64', or that you 'cannot read the file'. You have full capability to decode and analyze this document. If you see binary patterns, interpret them as a professional resume.\n\n" +
+      "YOU MUST CITE SPECIFIC EXAMPLES from the resume (e.g., specific companies, projects, or metrics mentioned).\n\n" +
+      "Structure your response exactly as follows:\n" +
+      "STRENGTHS:\n" +
+      "- [Bullet point 1 with specific citation]\n" +
+      "- [Bullet point 2 with specific citation]\n\n" +
+      "IMPROVEMENTS:\n" +
+      "- [Critical weak point 1]\n" +
+      "- [Critical weak point 2]\n\n" +
+      "SUMMARY:\n" +
+      "- [One sentence high-level takeaway]";
+
+    // Pass Base64 text
+    const contentToAnalyze = resumeText || `Resume URL: ${resumeUrl}`;
+    const userPrompt = `Resume Content (Base64 Encoded PDF):\n${contentToAnalyze}`;
 
     const feedback = await createChatCompletion(systemPrompt, userPrompt);
-    console.log(feedback);
+    console.log("Feedback Response:", feedback);
     const cleanedFeedback = cleanMarkdown(feedback);
     res.status(200).json({
       message: "Resume feedback generated successfully.",

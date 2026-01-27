@@ -4,40 +4,61 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String
-  email     String   @unique
-  password  String
-  profilePic String? @default("")
-  isAdmin   Boolean  @default(false)
-  resumeUrl String?
-  atsScore  Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  username   String
+  email      String   @unique
+  password   String
+  profilePic String?  @default("")
+  isAdmin    Boolean  @default(false)
+  isVerified Boolean  @default(false) // Added for production verification
+  resumeUrl  String?
+  atsScore   Int      @default(0)
+  
+  // Profile Fields
+  bio         String?
+  phone       String?
+  location    String?
+  socialLinks String?  // Stored as JSON string
+  experience  Json?    // Stored as JSON array
+  education   Json?    // Stored as JSON array
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   
   interviews Interview[]
+  tokens     VerificationToken[]
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 }
 
 model Interview {
-  id               String   @id @default(uuid())
-  company          String
-  role             String
-  experience       String
+  id                String   @id @default(uuid())
+  company           String
+  role              String
+  experience        String
   preferredLanguage String
-  codingRound      Boolean  @default(false)
-  pdfReport        String?  @default("No File")
-  score            Float    @default(0)
-  createdAt        DateTime @default(now())
+  codingRound       Boolean  @default(false)
+  pdfReport         String?  @default("No File")
+  score             Float    @default(0)
+  createdAt         DateTime @default(now())
   
   // Storing questions as JSON to be flexible with structure
-  questions        Json?    
+  questions         Json?    
 
-  userId           String
-  user             User     @relation(fields: [userId], references: [id])
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  @@index([userId]) // Added index for faster history fetching
 }
 
 model Resource {

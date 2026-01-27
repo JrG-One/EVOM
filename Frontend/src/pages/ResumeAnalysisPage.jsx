@@ -4,6 +4,7 @@ import AnalysisStatus from '../components/ResumeAnalyser/AnalysisStatus';
 import ResultTabs from '../components/ResumeAnalyser/ResultTabs';
 import { useAuthStore } from '../store/useAuthStore';
 import { axiosInstance } from '../lib/axios';
+import { SearchCode } from 'lucide-react';
 
 export default function ResumeAnalysisPage() {
   const [file, setFile] = useState(null);
@@ -68,31 +69,57 @@ export default function ResumeAnalysisPage() {
   const parseFeedbackSections = (text) => {
     const strengths = [];
     const improvements = [];
+    const summary = [];
     let currentSection = null;
+
+    if (!text) return { strengths, improvements, summary: "" };
 
     const lines = text.split("\n");
     for (let line of lines) {
-      line = line.trim();
+      const trimmed = line.trim();
+      if (!trimmed) continue;
 
-      if (/^strengths[:]?$/i.test(line)) {
+      const lowerLine = trimmed.toLowerCase();
+
+      // Header detection
+      if (lowerLine.startsWith('strength')) {
         currentSection = 'strengths';
         continue;
       }
-
-      if (/areas?\s+for\s+improvement[:]?$/i.test(line)) {
+      if (lowerLine.startsWith('area') || lowerLine.startsWith('improvement') || lowerLine.startsWith('weakness')) {
         currentSection = 'improvements';
         continue;
       }
+      if (lowerLine.startsWith('summary') || lowerLine.startsWith('overall')) {
+        currentSection = 'summary';
+        continue;
+      }
 
-      const match = line.match(/^\d+[\.\)]\s+(.*)/);
+      // Match bullets or numbered lists (1. or - or *)
+      const match = trimmed.match(/^(\d+[\.\)]|\u2022|-|\*)\s+(.*)/);
+
       if (match && currentSection) {
-        const item = match[1].trim();
+        const item = match[2].trim();
         if (currentSection === 'strengths') strengths.push(item);
-        if (currentSection === 'improvements') improvements.push(item);
+        else if (currentSection === 'improvements') improvements.push(item);
+        else if (currentSection === 'summary') summary.push(item);
+      } else if (currentSection && (strengths.length > 0 || improvements.length > 0 || summary.length > 0)) {
+        // Append to last item if it's a continuation line
+        const targetArr = currentSection === 'strengths' ? strengths
+          : currentSection === 'improvements' ? improvements
+            : summary;
+
+        if (targetArr.length > 0) {
+          targetArr[targetArr.length - 1] += " " + trimmed;
+        }
       }
     }
 
-    return { strengths, improvements };
+    return {
+      strengths,
+      improvements,
+      summary: summary.join(" ")
+    };
   };
 
   const analyzeResume = async (file) => {
@@ -109,41 +136,39 @@ export default function ResumeAnalysisPage() {
       const uploadRes = await axiosInstance.put('/resume/upload-resume', formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const resumeUrl = uploadRes.data.resumeUrl;
+      const { resumeUrl, resumeText } = uploadRes.data;
 
-      // Parallel analysis requests
-      const [atsRes, feedbackRes, tipsRes] = await Promise.all([
-        axiosInstance.post('/resume/ats-score', { resumeUrl }, {
+      console.log("Extracted Text Length:", resumeText?.length || 0);
+
+      // Parallel analysis requests (Removed tips)
+      const [atsRes, feedbackRes] = await Promise.all([
+        axiosInstance.post('/resume/ats-score', { resumeUrl, resumeText }, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axiosInstance.post('/resume/resume-feedback', { resumeUrl }, {
+        axiosInstance.post('/resume/resume-feedback', { resumeUrl, resumeText }, {
           headers: { Authorization: `Bearer ${token}` },
-        }),
-        axiosInstance.post('/resume/resume-improvement-tips', { resumeUrl }, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        })
       ]);
 
       // Score
       const score = parseInt(atsRes.data.atsScore, 10);
       updateScore({ atsScore: score });
 
-      // Feedback sections
-      const { strengths, improvements } = parseFeedbackSections(feedbackRes.data.feedback);
+      console.log("Raw Feedback:", feedbackRes.data.feedback);
 
-      // Improvement tips → Keywords
-      const keywords = [];
-      tipsRes.data.improvementTips.split('\n').forEach((line) => {
-        const match = line.trim().match(/^\d+[\.\)]\s+(.*)/);
-        if (match) keywords.push(match[1].trim());
-      });
+      // Feedback sections
+      const { strengths, improvements, summary } = parseFeedbackSections(feedbackRes.data.feedback);
+      console.log("Parsed Strengths:", strengths);
+      console.log("Parsed Improvements:", improvements);
+      console.log("Parsed Summary:", summary);
 
       // Final state update
       setAnalysisResults({
         score,
         strengths,
         improvements,
-        keywords,
+        summary,
+        keywords: [], // Empty as feature is removed
         sections: {},
       });
 
@@ -171,36 +196,56 @@ export default function ResumeAnalysisPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <h1 className="text-3xl font-bold text-center mb-6">Resume Analyzer</h1>
+    <div className="min-h-screen bg-[#030303] text-white p-6 lg:p-10 font-sans selection:bg-purple-500/30">
+      {/* Background Atmosphere */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse duration-[15s]" />
+      </div>
 
-      {!isUploaded ? (
-        <UploadZone
-          isDragging={isDragging}
-          handleDragEnter={handleDragEnter}
-          handleDragLeave={handleDragLeave}
-          handleDragOver={handleDragOver}
-          handleDrop={handleDrop}
-          handleFileChange={handleFileChange}
-        />
-      ) : (
-        <div className="space-y-6">
-          <AnalysisStatus
-            file={file}
-            isAnalyzing={isAnalyzing}
-            analysisComplete={analysisComplete}
-            handleReupload={handleReupload}
-          />
-
-          {isAnalyzing && (
-            <div className="text-center text-blue-600 font-medium">Analyzing resume...</div>
-          )}
-
-          {!isAnalyzing && analysisComplete && (
-            <ResultTabs analysisResults={analysisResults} />
-          )}
+      <div className="relative z-10 max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        {/* Header */}
+        <div className="flex flex-col items-center text-center space-y-4 mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600/20 to-purple-600/20 ring-1 ring-white/10 shadow-2xl mb-4 backdrop-blur-md">
+            <SearchCode className="w-8 h-8 text-blue-400" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-2">
+            Resume <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Optimization</span>
+          </h1>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed font-medium">
+            Upload your resume to get an AI-powered analysis against elite industry standards.
+            Receive actionable feedback and keyword optimization tips.
+          </p>
         </div>
-      )}
+
+        {!isUploaded ? (
+          <UploadZone
+            isDragging={isDragging}
+            handleDragEnter={handleDragEnter}
+            handleDragLeave={handleDragLeave}
+            handleDragOver={handleDragOver}
+            handleDrop={handleDrop}
+            handleFileChange={handleFileChange}
+          />
+        ) : (
+          <div className="space-y-6">
+            <AnalysisStatus
+              file={file}
+              isAnalyzing={isAnalyzing}
+              analysisComplete={analysisComplete}
+              handleReupload={handleReupload}
+            />
+
+            {isAnalyzing && (
+              <div className="text-center text-blue-400 font-medium animate-pulse">Running full spectrum analysis...</div>
+            )}
+
+            {!isAnalyzing && analysisComplete && (
+              <ResultTabs analysisResults={analysisResults} />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -19,9 +19,9 @@ const PORT = process.env.PORT || 3000;
 
 app.set("trust proxy", true);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static("public"));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
 
 app.use(
@@ -53,7 +53,7 @@ app.use("/api", chatRoutes);
 app.use("/api/code", codeRoutes);
 
 app.get("/", (req, res) => {
-  res.send("InterviewWhiz Backend (PostgreSQL)");
+  res.send("Entervue Backend (PostgreSQL)");
 });
 
 app.listen(PORT, () => {

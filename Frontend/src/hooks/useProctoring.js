@@ -9,7 +9,15 @@ export const useProctoring = (isActive = true) => {
     const handleViolation = useCallback((message) => {
         setWarnings(prev => prev + 1);
         console.warn(`Proctoring Warning: ${message}`);
-        toast.warning("Proctoring Alert", { description: message });
+        toast.warning("Proctoring Alert", {
+            description: message,
+            action: {
+                label: "Dismiss",
+                onClick: () => console.log("Warning dismissed")
+            },
+            closeButton: true,
+            duration: 10000 // Keep it long enough to read but let them close it
+        });
     }, []);
 
     useEffect(() => {
@@ -36,14 +44,20 @@ export const useProctoring = (isActive = true) => {
             }
         };
 
+        const handleBeforeUnload = (e) => {
+            e.preventDefault();
+            e.returnValue = ''; // Chrome requires returnValue to be set
+            handleViolation("Attempted to reload/leave. This action is recorded.");
+        };
+
         document.addEventListener("visibilitychange", handleVisibilityChange);
-        // window.addEventListener("blur", handleBlur); // Can be too aggressive
         document.addEventListener("fullscreenchange", handleFullscreenChange);
+        window.addEventListener("beforeunload", handleBeforeUnload);
 
         return () => {
             document.removeEventListener("visibilitychange", handleVisibilityChange);
-            // window.removeEventListener("blur", handleBlur);
             document.removeEventListener("fullscreenchange", handleFullscreenChange);
+            window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, [isActive, handleViolation]);
 
@@ -56,10 +70,22 @@ export const useProctoring = (isActive = true) => {
         }
     };
 
+    const exitFullscreen = async () => {
+        try {
+            if (document.fullscreenElement) {
+                await document.exitFullscreen();
+                setIsFullscreen(false);
+            }
+        } catch (err) {
+            console.error("Error attempting to exit fullscreen:", err);
+        }
+    };
+
     return {
         warnings,
         isFullscreen,
         tabSwitchCount,
-        enterFullscreen
+        enterFullscreen,
+        exitFullscreen
     };
 };

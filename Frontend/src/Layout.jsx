@@ -19,7 +19,7 @@ function Layout() {
         "--sidebar-width": "12rem",
         "--sidebar-width-mobile": "20rem",
       }}
-      className="bg-accent"
+      className="bg-[#030303] dark"
       open={open}
       onOpenChange={setOpen}
     >

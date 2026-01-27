@@ -18,19 +18,31 @@ const InterviewPage = () => {
     currentQuestionType, // P2: Get type
   } = useInterviewStore();
 
-  const { warnings, enterFullscreen, isFullscreen } = useProctoring();
+  const { warnings, enterFullscreen, exitFullscreen, isFullscreen } = useProctoring();
 
   // Prompt for fullscreen on load
   React.useEffect(() => {
     // Optional: Try to enter fullscreen automatically or show a toast suggesting it
-    // enterFullscreen(); 
+    enterFullscreen();
   }, [enterFullscreen]);
 
   // const time = new Date();
   // time.setSeconds(time.getSeconds() + 15);
 
+  const handleAudioUnlock = () => {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+    const unlock = new SpeechSynthesisUtterance("");
+    unlock.volume = 0;
+    window.speechSynthesis.speak(unlock);
+  };
+
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div
+      className="h-screen flex flex-col bg-[#030303] text-white overflow-hidden"
+      onClick={handleAudioUnlock}
+    >
       <InterviewHeader
         generateNewQuestion={generateNewQuestion}
         endInterview={endInterview}
@@ -39,11 +51,12 @@ const InterviewPage = () => {
         warnings={warnings}
         isFullscreen={isFullscreen}
         onEnterFullscreen={enterFullscreen}
+        onExitFullscreen={exitFullscreen}
       />
 
       <ResizablePanelGroup
         direction="horizontal"
-        className="flex-1"
+        className="flex-1 bg-black"
         onLayout={(sizes) => setDefaultLayout(sizes)}
       >
         <ConversationPanel
@@ -53,7 +66,7 @@ const InterviewPage = () => {
 
         {currentQuestionType === "CODING" ? (
           <>
-            <ResizableHandle withHandle />
+            <ResizableHandle withHandle className="bg-white/5 border-none w-[1.5px] hover:bg-purple-500/50 transition-colors" />
             <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
               <CodeEditorWindow />
             </ResizablePanel>

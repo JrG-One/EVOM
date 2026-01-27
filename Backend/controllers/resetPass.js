@@ -14,7 +14,7 @@ const sendOtp = async (req, res) => {
     return res.status(400).json({ message: "Invalid credentials" });
   }
   const OTP = generateOTP();
-  otpCache.set(email, { otp: OTP }, 1000 * 60 * 5);
+  otpCache.set(email, { otp: OTP }, 300); // 5 minutes in seconds (NodeCache unit)
 
   // console.log(email)
   // console.log(OTP)

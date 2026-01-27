@@ -5,19 +5,19 @@ import { toast } from "sonner";
 const BASE_URL =
   import.meta.env.MODE === "development" ? "http://localhost:5001/api" : "/";
 
-export const useFormStore = create((set,get) => ({
+export const useFormStore = create((set, get) => ({
   formData: {
     name: "",
     company: "",
     role: "",
     experience: "",
-    prefferedLanguage: "",
-    codingRound:false,
+    preferredLanguage: "",
+    codingRound: false,
   },
 
-  interviewId:null,
+  interviewId: null,
 
-  setFormData: async(data) => {
+  setFormData: async (data) => {
 
     console.log("Sending data:", data);
     const response = await axiosInstance.post("/interview/", data);
@@ -28,6 +28,6 @@ export const useFormStore = create((set,get) => ({
       interviewId: response.data.interviewId,  // Store interview ID
     }));
 
-    
+
   },
 }));

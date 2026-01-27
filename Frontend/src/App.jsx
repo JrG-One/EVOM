@@ -8,10 +8,12 @@ import Layout from "./Layout";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/Homepage";
 import ProfilePage from "./pages/ProfilePage";
+import DashboardPage from "./pages/DashboardPage";
 import ResourcePage from "./pages/ResourcePage";
 import InterviewForm from "./pages/InterviewFormPage";
 import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
 import InterviewPage from "./pages/InterviewPage";
+import LandingPageV2 from "./pages/LandingPageV2";
 
 import {
   createBrowserRouter,
@@ -25,13 +27,13 @@ import CodeEditorWindow from "./components/CodeEditor/CodeEditorWindow";
 function PublicRoute({ children }) {
   const { authUser } = useAuthStore();
   console.log({ authUser });
-  return authUser ? <Navigate to="/" replace /> : children;
+  return authUser ? <Navigate to="/dashboard" replace /> : children;
 }
 
 // Protect routes that require authentication
 function PrivateRoute({ children }) {
   const { authUser } = useAuthStore();
-  return authUser ? children : <Navigate to="/home" replace />;
+  return authUser ? children : <Navigate to="/get-started" replace />;
 }
 
 function App() {
@@ -54,11 +56,15 @@ function App() {
     },
     {
       path: "/",
-      element: <HomePage />,
+      element: authUser ? <Navigate to="/dashboard" replace /> : <LandingPageV2 />,
     },
     {
       path: "/home",
-      element: <HomePage />,
+      element: <LandingPageV2 />,
+    },
+    {
+      path: "/evom",
+      element: <LandingPageV2 />,
     },
     {
       path: "/start-interview",
@@ -74,6 +80,22 @@ function App() {
       children: [
         {
           index: true,
+          element: (
+            <PrivateRoute>
+              <DashboardPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "dashboard",
+          element: (
+            <PrivateRoute>
+              <DashboardPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "profile",
           element: (
             <PrivateRoute>
               <ProfilePage />
@@ -104,15 +126,15 @@ function App() {
             </PrivateRoute>
           ),
         },
-        {
-          path: "interview",
-          element: (
-            <PrivateRoute>
-              <InterviewPage />
-            </PrivateRoute>
-          ),
-        },
       ],
+    },
+    {
+      path: "/interview",
+      element: (
+        <PrivateRoute>
+          <InterviewPage />
+        </PrivateRoute>
+      ),
     },
     {
       path: "/code-test",

@@ -52,37 +52,45 @@ const CircularLoader = ({ analysisCompleted, onComplete }) => {
   }, [progress, analysisCompleted, onComplete]);
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-center space-y-6">
       <div className="relative" style={{ width: size, height: size }}>
-        <svg className="w-full h-full" viewBox={`0 0 ${size} ${size}`}>
+        {/* Background Circle */}
+        <svg className="w-full h-full transform -rotate-90" viewBox={`0 0 ${size} ${size}`}>
           <circle
             cx={center}
             cy={center}
             r={radius}
             fill="transparent"
-            stroke="#e6e6e6"
+            stroke="rgba(255, 255, 255, 0.1)"
             strokeWidth={strokeWidth}
           />
+          {/* Progress Circle with Gradient */}
+          <defs>
+            <linearGradient id="loaderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#9333ea" /> {/* Purple */}
+              <stop offset="100%" stopColor="#3b82f6" /> {/* Blue */}
+            </linearGradient>
+          </defs>
           <circle
             cx={center}
             cy={center}
             r={radius}
             fill="transparent"
-            stroke="#3b82f6"
+            stroke="url(#loaderGradient)"
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            transform={`rotate(-90 ${center} ${center})`}
+            className="transition-all duration-300 ease-out"
           />
         </svg>
 
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-semibold">{progress}%</span>
+          <span className="text-3xl font-black text-white">{progress}%</span>
         </div>
       </div>
 
-      <p className="text-sm text-gray-500 animate-pulse text-center max-w-xs">
+      <p className="text-sm text-gray-400 animate-pulse text-center max-w-xs font-medium tracking-wide">
         {statusText}
       </p>
     </div>

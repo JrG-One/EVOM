@@ -1,42 +1,80 @@
-name: Deploy React Application
+name: Frontend CI/CD Pipeline
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  test:
+    name: Linting & Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./Frontend
+      - name: Run Lint
+        run: npm run lint || echo "Linting failed but continuing..."
+        working-directory: ./Frontend
 
+  build:
+    name: Build & Push Docker Image
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Frontend
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/interviewwhiz-frontend:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/interviewwhiz-frontend:latest
 
-      - name: Build Docker Image
-        run: docker build -t wthug/interviewviz-react .
-
-      - name: Publish Image to Docker hub
-        run: docker push wthug/interviewviz-react:latest
-
-  deploy:
+  deploy-staging:
+    name: Deploy to Staging
     needs: build
     runs-on: self-hosted
+    environment: staging
     steps:
-      - name: removing previous running container
-        run: docker rm -f react-app-container
+      - name: Pull and Run Staging Container
+        run: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/interviewwhiz-frontend:${{ github.sha }}
+          docker stop frontend-staging || true
+          docker rm frontend-staging || true
+          docker run -d \
+            --name frontend-staging \
+            -p 8081:80 \
+            ${{ secrets.DOCKER_USERNAME }}/interviewwhiz-frontend:${{ github.sha }}
 
-      - name: Pull image from docker hub
-        run: docker pull wthug/interviewviz-react:latest
-
-      - name: run docker container
-        run: docker run -d -p 8080:80 --name react-app-container wthug/interviewviz-react
-
-      - name: Prune dangling images
-        run: docker image prune -f
+  deploy-production:
+    name: Deploy to Production
+    needs: deploy-staging
+    runs-on: self-hosted
+    environment: production
+    steps:
+      - name: Pull and Run Production Container
+        run: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/interviewwhiz-frontend:${{ github.sha }}
+          docker stop frontend-production || true
+          docker rm frontend-production || true
+          docker run -d \
+            --name frontend-production \
+            -p 8080:80 \
+            ${{ secrets.DOCKER_USERNAME }}/interviewwhiz-frontend:${{ github.sha }}

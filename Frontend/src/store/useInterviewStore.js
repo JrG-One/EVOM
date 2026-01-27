@@ -17,6 +17,9 @@ const detectEndIntent = (message) => {
     "end of the interview",
     "Thank you for sharing your insights and experiences with me today.",
     "wrap up",
+    "end interview",
+    "finish interview",
+    "stop interview",
   ];
   return endPhrases.some((phrase) => lower.includes(phrase));
 };
@@ -52,7 +55,7 @@ export const useInterviewStore = create(
         company: "",
         role: "",
         experience: "",
-        prefferedLanguage: "",
+        preferredLanguage: "",
         codingRound: false,
       },
       interviewId: null,
@@ -60,246 +63,198 @@ export const useInterviewStore = create(
       analysisReport: null,
       interviewShouldEnd: false,
       generatingResponse: false,
-      // New State for P2
       currentQuestionType: "THEORY",
       isLoading: false,
       conversation: [],
       currentCoversationIndex: 0,
       interviews: [],
+      isVoiceMode: true, // Default to true (Student Mic)
+      isListening: false,
+      isSpeaking: false,
+
+      setVoiceMode: (enabled) => {
+        set({ isVoiceMode: enabled });
+        if (!enabled) {
+          set({ isListening: false });
+        } else {
+          // Warm up audiocontext/speech
+          const utterance = new SpeechSynthesisUtterance("");
+          window.speechSynthesis.speak(utterance);
+        }
+      },
+
+      setListening: (listening) => {
+        if (!get().isVoiceMode && listening) return;
+        set({ isListening: listening });
+      },
+
+      speakAIResponse: (text) => {
+        // AI bot ALWAYS speaks, regardless of isVoiceMode (student mic) toggle
+        try {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.resume();
+
+          const cleanText = text.replace(/<<.*?>>/g, '').replace(/[#*`]/g, '').trim();
+          if (!cleanText) return;
+
+          const utterance = new SpeechSynthesisUtterance(cleanText);
+
+          const executeSpeak = () => {
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes("Female") || v.name.includes("Samantha") || v.name.includes("Google")))
+              || voices.find(v => v.lang.startsWith('en'))
+              || voices[0];
+
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            utterance.onstart = () => set({ isSpeaking: true });
+            utterance.onend = () => set({ isSpeaking: false });
+            utterance.onerror = () => set({ isSpeaking: false });
+
+            window.speechSynthesis.speak(utterance);
+          };
+
+          if (window.speechSynthesis.getVoices().length > 0) {
+            executeSpeak();
+          } else {
+            window.speechSynthesis.onvoiceschanged = executeSpeak;
+          }
+        } catch (e) {
+          console.error("Speech synthesis failed", e);
+          set({ isSpeaking: false });
+        }
+      },
 
       setFormData: async (data) => {
         set({ isLoading: true });
-
         const { startInterview } = get();
-
         try {
-          console.log("Sending data:", data);
           const response = await axiosInstance.post("/interview/", data);
-          console.log("Response received:", response.data);
-
-          set((state) => {
-            const updatedFormData = { ...state.formData, ...data };
-            console.log("Updated formData state:", updatedFormData);
-            return {
-              formData: updatedFormData,
-              interviewId: response.data.interviewId,
-            };
-          });
-
-          toast.success("Form submitted successfully!");
+          set((state) => ({
+            formData: { ...state.formData, ...data },
+            interviewId: response.data.interviewId,
+          }));
+          toast.success("Ready for session!");
           startInterview();
           set({ isLoading: false });
         } catch (error) {
-          console.error("Error submitting form:", error);
-          toast.error("Failed to submit form. Please try again.");
+          set({ isLoading: false });
         }
       },
 
       startInterview: async () => {
-        set({ isLoading: true, nextQuestionReady: false, conversation: [] });
-
+        set({ isLoading: true, nextQuestionReady: false, conversation: [], isVoiceMode: true });
         const { formData } = get();
-
-        const {
-          role: jobRole,
-          company: targetCompany,
-          prefferedLanguage: preferredLanguage,
-          experience: yearsOfExperience,
-          codingRound,
-        } = formData;
+        const { role: jobRole, company: targetCompany, codingRound } = formData;
 
         const systemMessage = {
           role: "system",
-          content: `
-You are a senior technical interviewer conducting mock interviews for the role of ${jobRole} at ${targetCompany}.
-Start your interview with a warm greeting. Ask one question at a time, wait for answers.
-IMPORTANT: Prefix every question with a tag indicating the type of question.
-- If it is a Coding/Programming question requiring code, start with <<TYPE:CODING>>.
-- If it is a Theory/Behavioral/Conceptual question, start with <<TYPE:THEORY>>.
-- Example: "<<TYPE:THEORY>> Tell me about yourself." or "<<TYPE:CODING>> Write a function to reverse a string."
-Use <<NEXT_QUESTION>> to indicate readiness for the next.
-Use <<END_INTERVIEW>> to end the interview.
-      `.trim(),
+          content: `You're an elite technical interviewer for ${jobRole} at ${targetCompany}. Ask questions concisely. Tag responses with <<TYPE:THEORY>> or <<TYPE:CODING>>.`
         };
-
         const userMessage = {
           role: "user",
-          content: codingRound
-            ? `Generate a technical question for a ${jobRole} role at ${targetCompany}, using ${preferredLanguage}, experience: ${yearsOfExperience} years.`
-            : `Generate a theoretical/behavioral question for a ${jobRole} role at ${targetCompany}, with ${yearsOfExperience} years of experience.`,
+          content: codingRound ? `Start coding round.` : `Start conceptual round.`
         };
 
-        const initialMessages = [systemMessage, userMessage];
-        const response = await axiosInstance.post("/chat", {
-          messages: initialMessages,
-        });
+        try {
+          const response = await axiosInstance.post("/chat", { messages: [systemMessage, userMessage] });
+          const { cleanedReply, questionType, nextQuestionReady } = parseAIResponse(response.data.reply);
 
-        const rawReply = response.data.reply;
-        const { cleanedReply, questionType, interviewShouldEnd, nextQuestionReady } = parseAIResponse(rawReply);
+          set({
+            conversation: [systemMessage, userMessage, { role: "assistant", content: cleanedReply }],
+            currentCoversationIndex: 2,
+            isLoading: false,
+            currentQuestionType: questionType || "THEORY",
+            nextQuestionReady
+          });
 
-        const updatedConversation = [
-          ...initialMessages,
-          { role: "assistant", content: cleanedReply },
-        ];
-
-        set({
-          conversation: updatedConversation,
-          currentCoversationIndex: 2,
-          isLoading: false,
-          currentQuestionType: questionType || "THEORY",
-          interviewShouldEnd,
-          nextQuestionReady
-        });
+          get().speakAIResponse(cleanedReply);
+        } catch (e) {
+          set({ isLoading: false });
+        }
       },
 
-      sendMessage: async (event) => {
-        // event.preventDefault();
-        if (!event || event.trim() === "") return;
+      sendMessage: async (content) => {
+        if (!content || content.trim() === "") return;
         set({ generatingResponse: true });
 
-        const userMessage = event.trim();
+        const userMsg = content.trim();
         const { conversation } = get();
-
-        const hasSystemMessage = conversation.some(
-          (msg) => msg.role === "system" || msg.role === "developer",
-        );
+        const { role: jobRole, company: targetCompany } = get().formData;
 
         const systemMessage = {
           role: "system",
-          content:
-            "You're an experienced technical interviewer. Ask thoughtful, contextual questions based on the chat history.",
+          content: `Experienced interviewer for ${jobRole} at ${targetCompany}. Use <<TYPE:THEORY>> or <<TYPE:CODING>>.`
         };
 
         const updatedConversation = [
-          ...(hasSystemMessage ? [] : [systemMessage]),
-          ...conversation,
-          { role: "user", content: userMessage },
+          ...conversation.filter(msg => msg.role !== 'system'),
+          systemMessage,
+          { role: "user", content: userMsg }
         ];
-
-        console.log("📤 [Frontend] Sending to /chat API:");
-        console.log(JSON.stringify({ messages: updatedConversation }, null, 2));
 
         set({ conversation: updatedConversation });
 
         try {
-          const response = await axiosInstance.post("/chat", {
-            messages: updatedConversation,
-          });
-
-          const rawReply = response.data.reply;
-          const { cleanedReply, questionType, interviewShouldEnd, nextQuestionReady } = parseAIResponse(rawReply);
-
-          if (interviewShouldEnd) {
-            const { endInterview } = get();
-            endInterview();
-          }
-
-          const assistantMessage = {
-            role: "assistant",
-            content: cleanedReply,
-          };
+          const response = await axiosInstance.post("/chat", { messages: updatedConversation });
+          const { cleanedReply, questionType, interviewShouldEnd, nextQuestionReady } = parseAIResponse(response.data.reply);
 
           set((state) => ({
-            conversation: [...state.conversation, assistantMessage],
+            conversation: [...state.conversation, { role: "assistant", content: cleanedReply }],
             nextQuestionReady,
-            interviewShouldEnd,
-            currentQuestionType: questionType || state.currentQuestionType, // Preserving existing type if null
+            interviewShouldEnd: interviewShouldEnd || state.interviewShouldEnd,
+            currentQuestionType: questionType || "THEORY",
           }));
+
+          get().speakAIResponse(cleanedReply);
         } catch (error) {
-          console.error(
-            "❌ [Frontend] Error fetching AI response:",
-            error?.response?.data || error.message,
-          );
+          set({ generatingResponse: false });
         } finally {
           set({ generatingResponse: false });
         }
       },
 
       generateNewQuestion: async () => {
-        set({
-          isLoading: true,
-          nextQuestionReady: false,
-          interviewShouldEnd: false,
-        });
+        set({ isLoading: true, nextQuestionReady: false });
+        const { conversation } = get();
+        const userMessage = { role: "user", content: "Proceed to the next question." };
 
-        const { formData, conversation } = get();
+        try {
+          const response = await axiosInstance.post("/chat", { messages: [...conversation, userMessage] });
+          const { cleanedReply, questionType } = parseAIResponse(response.data.reply);
 
-        const {
-          role: jobRole,
-          company: targetCompany,
-          prefferedLanguage: preferredLanguage,
-          experience: yearsOfExperience,
-          codingRound,
-        } = formData;
+          set((state) => ({
+            conversation: [...state.conversation, userMessage, { role: "assistant", content: cleanedReply }],
+            isLoading: false,
+            currentQuestionType: questionType || "THEORY",
+            nextQuestionReady: false
+          }));
 
-        const userMessage = {
-          role: "user",
-          content: codingRound
-            ? `Ask a new technical question on a different topic for a ${jobRole} role at ${targetCompany}, considering ${yearsOfExperience} years of experience in ${preferredLanguage}.`
-            : `Ask a new theoretical/managerial question on a different topic for a ${jobRole} role at ${targetCompany}, with ${yearsOfExperience} years of experience.`,
-        };
-
-        const updatedConversation = [...conversation, userMessage];
-
-        const response = await axiosInstance.post("/chat", {
-          messages: updatedConversation,
-        });
-
-        const rawReply = response.data.reply;
-        const { cleanedReply, questionType, interviewShouldEnd, nextQuestionReady } = parseAIResponse(rawReply);
-
-        const assistantMessage = {
-          role: "assistant",
-          content: cleanedReply,
-        };
-
-        set((state) => ({
-          currentCoversationIndex: state.conversation.length + 1,
-          conversation: [...state.conversation, userMessage, assistantMessage],
-          isLoading: false,
-          nextQuestionReady: false,
-          interviewShouldEnd: false,
-          currentQuestionType: questionType,
-        }));
+          get().speakAIResponse(cleanedReply);
+        } catch (e) {
+          set({ isLoading: false });
+        }
       },
 
       endInterview: async () => {
         const { conversation, interviewId, formData } = get();
-
-        // Convert chat messages into formatted feedback string
-        const feedback = conversation
-          .map((msg) => `${msg.role.toUpperCase()}: ${msg.content}`)
-          .join("\n\n");
-
+        const feedback = conversation.map((msg) => `${msg.role.toUpperCase()}: ${msg.content}`).join("\n\n");
         try {
-          const response = await axiosInstance.post("/portal/analysis", {
-            interviewId,
-            feedback,
-            formData,
-          });
-
-          console.log("✅ Analysis complete:", response.data);
-          const { pdfUrl } = response.data;
-          if (pdfUrl) {
-            window.open(pdfUrl, "_blank");
-          }
-
-          // Optionally: Store report URL or trigger UI updates
+          const response = await axiosInstance.post("/portal/analysis", { interviewId, feedback, formData });
+          if (response.data.pdfUrl) window.open(response.data.pdfUrl, "_blank");
           set({ analysisReport: response.data });
-        } catch (error) {
-          console.error(
-            "❌ Failed to generate analysis:",
-            error?.response?.data || error.message,
-          );
-        }
+        } catch (error) { }
       },
+
       fetchUserInterviews: async () => {
         set({ isLoading: true });
         try {
           const res = await axiosInstance.get("/interview");
           set({ interviews: res.data });
         } catch (error) {
-          console.error("Error fetching interviews:", error);
         } finally {
           set({ isLoading: false });
         }

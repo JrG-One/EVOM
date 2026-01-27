@@ -82,7 +82,7 @@ const HeroSection = () => {
               >
                 Start Practicing <ArrowRight className="ml-2 h-5 w-5" />
               </button>
-              
+
               <a href="https://www.youtube.com/watch?v=DCXWA5oSea0" target="_blank" className="bg-transparent border-2 border-white text-white hover:bg-white/10 px-6 py-3 rounded-full font-bold transition flex items-center hover:cursor-pointer">
                 Watch Demo <PlayCircle className="ml-2 h-5 w-5" />
               </a>
@@ -190,7 +190,7 @@ const FeaturesSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            How InterviewWhiz Works
+            How Entervue Works
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Our platform uses advanced AI to help you practice and improve your
@@ -283,7 +283,7 @@ const FAQSection = () => {
 
 // CTA Section Component
 const CTASection = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   return (
     <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -298,8 +298,8 @@ const CTASection = () => {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button 
-              onClick={()=>{navigate('/get-started')}}
+            <button
+              onClick={() => { navigate('/get-started') }}
               className="bg-white text-blue-700 hover:cursor-pointer hover:bg-blue-50 px-8 py-3 rounded-full font-bold shadow-lg transition flex items-center justify-center">
               Get Started Now <ArrowRight className="ml-2 h-5 w-5" />
             </button>
