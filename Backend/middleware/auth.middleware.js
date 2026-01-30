@@ -36,10 +36,17 @@ const requireAuth = async (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  if (!req.user || !req.user.isAdmin) {
+  if (!req.user || (req.user.role !== "ADMIN" && req.user.role !== "SUPERADMIN")) {
     return res.status(403).json({ message: "Forbidden - Admins only" });
   }
   next();
 };
 
-module.exports = { requireAuth, isAdmin };
+const isSuperAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== "SUPERADMIN") {
+    return res.status(403).json({ message: "Forbidden - Super Admins only" });
+  }
+  next();
+};
+
+module.exports = { requireAuth, isAdmin, isSuperAdmin };

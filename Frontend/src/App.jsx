@@ -14,7 +14,6 @@ import InterviewForm from "./pages/InterviewFormPage";
 import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
 import InterviewPage from "./pages/InterviewPage";
 import LandingPageV2 from "./pages/LandingPageV2";
-
 import {
   createBrowserRouter,
   Navigate,
@@ -23,10 +22,16 @@ import {
 import PortalPage from "./pages/PortalPage";
 import CodeEditorWindow from "./components/CodeEditor/CodeEditorWindow";
 
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminInterviews from "./pages/admin/AdminInterviews";
+import AdminResources from "./pages/admin/AdminResources";
+
 // Redirect logged-in users from public pages
 function PublicRoute({ children }) {
   const { authUser } = useAuthStore();
-  console.log({ authUser });
+  // console.log({ authUser });
   return authUser ? <Navigate to="/dashboard" replace /> : children;
 }
 
@@ -34,6 +39,16 @@ function PublicRoute({ children }) {
 function PrivateRoute({ children }) {
   const { authUser } = useAuthStore();
   return authUser ? children : <Navigate to="/get-started" replace />;
+}
+
+// Protect routes that require Super Admin role
+function SuperAdminRoute({ children }) {
+  const { authUser } = useAuthStore();
+  return authUser?.role === "SUPERADMIN" ? (
+    children
+  ) : (
+    <Navigate to="/dashboard" replace />
+  );
 }
 
 function App() {
@@ -139,6 +154,36 @@ function App() {
     {
       path: "/code-test",
       element: <CodeEditorWindow />,
+    },
+    {
+      path: "/admin",
+      element: (
+        <SuperAdminRoute>
+          <AdminLayout />
+        </SuperAdminRoute>
+      ),
+      children: [
+        {
+          index: true,
+          element: <Navigate to="dashboard" replace />,
+        },
+        {
+          path: "dashboard",
+          element: <AdminDashboard />,
+        },
+        {
+          path: "users",
+          element: <AdminUsers />,
+        },
+        {
+          path: "interviews",
+          element: <AdminInterviews />,
+        },
+        {
+          path: "resources",
+          element: <AdminResources />,
+        },
+      ],
     },
   ]);
 

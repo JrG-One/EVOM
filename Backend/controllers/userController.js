@@ -53,7 +53,15 @@ const loginUser = async (req, res) => {
 
     const token = generateToken(user.id, res);
 
-    res.status(200).json({ email, token, username: user.username, msg: "Login Successful", isAdmin: user.isAdmin, atsScore: user.atsScore });
+    res.status(200).json({
+      email,
+      token,
+      username: user.username,
+      msg: "Login Successful",
+      isAdmin: user.isAdmin,
+      role: user.role,
+      atsScore: user.atsScore
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

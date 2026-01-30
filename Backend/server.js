@@ -11,6 +11,8 @@ const portalRoute = require("./routes/portal");
 const resumeRoutes = require("./routes/resumeRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const codeRoutes = require("./routes/codeRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 // const { connect } = require("./db/connect"); // Removed MongoDB
@@ -51,6 +53,8 @@ app.use("/api/portal", portalRoute);
 app.use("/api/resume", resumeRoutes);
 app.use("/api", chatRoutes);
 app.use("/api/code", codeRoutes);
+app.use("/api/admin", adminRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Entervue Backend (PostgreSQL)");
