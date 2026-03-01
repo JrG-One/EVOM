@@ -68,7 +68,7 @@ export const useInterviewStore = create(
       conversation: [],
       currentCoversationIndex: 0,
       interviews: [],
-      isVoiceMode: true, // Default to true (Student Mic)
+      isVoiceMode: false, // Default to false (Student Mic)
       isListening: false,
       isSpeaking: false,
 
