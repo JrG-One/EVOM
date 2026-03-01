@@ -9,16 +9,71 @@ import useVoiceInteraction from "@/hooks/useVoiceInteraction";
 
 const ResponsePanel = ({ defaultSize = 50 }) => {
   const [userInput, setUserInput] = useState("");
-  const { sendMessage, generatingResponse, isVoiceMode, setVoiceMode, isListening } = useInterviewStore();
+  const { sendMessage, generatingResponse, isVoiceMode, setVoiceMode, isListening, isSpeaking } = useInterviewStore();
 
-  // Initialize voice interaction hook
-  useVoiceInteraction();
+  // Initialize voice interaction hook and get transcript
+  const { transcript, clearTranscript } = useVoiceInteraction();
+  const prevTranscriptRef = React.useRef("");
+  const manualTextRef = React.useRef(""); // Track manually typed text
+  const prevIsListeningRef = React.useRef(false);
+
+  const prevIsSpeakingRef = React.useRef(isSpeaking);
+
+  // Auto-switch mic based on AI speaking
+  React.useEffect(() => {
+    // Falling edge: AI was speaking, now stopped -> Turn Mic ON
+    if (prevIsSpeakingRef.current && !isSpeaking) {
+      setVoiceMode(true);
+    }
+    // Rising edge: AI started speaking -> Turn Mic OFF
+    else if (!prevIsSpeakingRef.current && isSpeaking) {
+      setVoiceMode(false);
+    }
+
+    prevIsSpeakingRef.current = isSpeaking;
+  }, [isSpeaking, setVoiceMode]);
+
+  // Sync voice transcript with userInput - append to manual text
+  React.useEffect(() => {
+    // When listening starts, save current text as manual baseline
+    if (isListening && !prevIsListeningRef.current) {
+      manualTextRef.current = userInput;
+      prevTranscriptRef.current = "";
+    }
+
+    // Only sync if we're listening AND transcript has changed
+    if (isListening && transcript && transcript !== prevTranscriptRef.current) {
+      // Append voice to manual text
+      const combinedText = manualTextRef.current
+        ? manualTextRef.current + " " + transcript
+        : transcript;
+      setUserInput(combinedText);
+      prevTranscriptRef.current = transcript;
+    } else if (!isVoiceMode) {
+      // Reset tracking when mic is turned off
+      prevTranscriptRef.current = "";
+      manualTextRef.current = "";
+    }
+
+    prevIsListeningRef.current = isListening;
+  }, [transcript, isListening, isVoiceMode, userInput]);
+
+  const handleInputChange = (e) => {
+    setUserInput(e.target.value);
+    // Auto-disable mic if user types manually
+    if (isVoiceMode) {
+      setVoiceMode(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!userInput.trim()) return;
     sendMessage(userInput);
     setUserInput("");
+    clearTranscript(); // Clear voice transcript after submit
+    prevTranscriptRef.current = ""; // Reset ref
+    manualTextRef.current = ""; // Reset manual text tracking
   };
 
   return (
@@ -47,8 +102,8 @@ const ResponsePanel = ({ defaultSize = 50 }) => {
                   placeholder={isVoiceMode ? "Interviewer is listening... Speak your answer or type here." : "Draft your response here..."}
                   className="w-full h-full resize-none bg-transparent border-none text-white/90 placeholder:text-white/50 focus-visible:ring-0 p-0 text-lg leading-relaxed selection:bg-purple-500/30"
                   value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  disabled={generatingResponse}
+                  onChange={handleInputChange}
+                  disabled={generatingResponse || isSpeaking}
                 />
 
                 {/* Visual indicator for typing area */}
@@ -76,9 +131,12 @@ const ResponsePanel = ({ defaultSize = 50 }) => {
                   <Button
                     type="button"
                     onClick={() => setVoiceMode(!isVoiceMode)}
-                    className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 border ${isVoiceMode
-                      ? "bg-purple-600/20 border-purple-500/50 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.2)]"
-                      : "bg-white/5 border-white/5 text-white/40 hover:text-white hover:bg-white/10"
+                    disabled={isSpeaking}
+                    className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 border
+                      ${isSpeaking ? "opacity-50 cursor-not-allowed bg-white/5 border-white/5 text-white/20" :
+                        isVoiceMode
+                          ? "bg-purple-600/20 border-purple-500/50 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.2)]"
+                          : "bg-white/5 border-white/5 text-white/40 hover:text-white hover:bg-white/10"
                       }`}
                   >
                     {isVoiceMode ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
