@@ -41,12 +41,20 @@ app.use(express.static("public"));
 app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [
-      "http://ec2-52-66-131-35.ap-south-1.compute.amazonaws.com",
-      "http://localhost:5173",
-    ],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".amplifyapp.com")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
