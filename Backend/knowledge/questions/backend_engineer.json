@@ -1,0 +1,153 @@
+{
+  "title": "Backend Engineer Interview Questions",
+  "source": "curated",
+  "category": "interview_question",
+  "role": "Backend Engineer",
+  "tags": ["backend", "api", "databases", "microservices", "system-design"],
+  "entries": [
+    {
+      "topic": "API Design",
+      "subtopic": "REST & GraphQL",
+      "difficulty": "medium",
+      "company": "Amazon",
+      "questionType": "system_design",
+      "question": "Design a RESTful API for an e-commerce order management system. How would you handle versioning, pagination, filtering, and error responses? When would you consider GraphQL instead?",
+      "expectedApproach": "Resources: /orders, /orders/:id, /orders/:id/items. Use nouns (not verbs) for endpoints. Versioning: URL path (/v1/) or Accept header. Pagination: cursor-based for real-time data, offset-based for static. Filtering: query params (?status=pending&date_from=...). Standard error format: { error: { code, message, details } }. Consider GraphQL when frontend needs flexible queries across multiple resources, or when over-fetching/under-fetching is a major issue.",
+      "keyPoints": [
+        "Use appropriate HTTP methods (GET, POST, PUT, PATCH, DELETE)",
+        "Cursor-based pagination avoids the offset skip-delete problem",
+        "Rate limiting and authentication (API keys, OAuth2, JWT)",
+        "HATEOAS for discoverability (links in responses)"
+      ],
+      "followUps": [
+        "How would you implement idempotency for POST requests?",
+        "Compare REST, GraphQL, and gRPC for microservice communication",
+        "How would you handle long-running operations (e.g., PDF generation)?"
+      ]
+    },
+    {
+      "topic": "Databases",
+      "subtopic": "SQL vs NoSQL",
+      "difficulty": "medium",
+      "company": "Google",
+      "questionType": "conceptual",
+      "question": "You're designing the database for a social media platform. Users can post content, follow other users, and have a feed of posts from people they follow. Would you use SQL or NoSQL? How would you model the data?",
+      "expectedApproach": "Hybrid approach: SQL (PostgreSQL) for structured data (users, posts — need ACID for financial transactions, follow relationships). NoSQL (Redis/Cassandra) for feed generation (pre-computed timelines, high read throughput). Fan-out-on-write: pre-compute feeds when someone posts. Fan-out-on-read: compute feed at read time for users with many followers. Trade-off: write amplification vs read latency.",
+      "keyPoints": [
+        "SQL: strong consistency, complex queries, ACID transactions",
+        "NoSQL: horizontal scaling, flexible schema, eventual consistency",
+        "Fan-out-on-write works well for users with few followers",
+        "Fan-out-on-read works better for celebrities (avoid write amplification)",
+        "Indexes are critical: composite indexes on (user_id, created_at)"
+      ],
+      "followUps": [
+        "How would you handle the 'celebrity problem' (users with millions of followers)?",
+        "What isolation level would you use and why?",
+        "How would you implement full-text search for posts?"
+      ]
+    },
+    {
+      "topic": "Caching",
+      "subtopic": "Cache Strategies",
+      "difficulty": "hard",
+      "company": "Amazon",
+      "questionType": "system_design",
+      "question": "Your API endpoint has a P99 latency of 2 seconds due to database queries. Design a caching layer to bring this under 200ms. Discuss cache invalidation strategies and consistency trade-offs.",
+      "expectedApproach": "Use Redis as a caching layer. Strategies: Cache-Aside (lazy loading — check cache, miss → query DB, populate cache), Write-Through (write to cache + DB together), Write-Behind (write to cache, async write to DB). TTL-based expiration for simplicity. For cache invalidation: event-driven invalidation (publish DB change events), versioned keys, or short TTLs. Consider thundering herd problem: use distributed locks or request coalescing.",
+      "keyPoints": [
+        "Cache-aside is most common: app manages cache population",
+        "Cache invalidation is one of the hardest problems in CS",
+        "Thundering herd: many requests hit DB simultaneously when cache expires",
+        "Solutions: staggered TTLs, background refresh, locking",
+        "Monitor hit rate: below 90% signals a problem"
+      ],
+      "followUps": [
+        "How would you implement a distributed cache across multiple regions?",
+        "What's the difference between Redis and Memcached?",
+        "How do you handle cache warming after a deployment?"
+      ]
+    },
+    {
+      "topic": "Authentication & Security",
+      "subtopic": "Auth Patterns",
+      "difficulty": "medium",
+      "company": "Microsoft",
+      "questionType": "conceptual",
+      "question": "Compare session-based authentication, JWT tokens, and OAuth 2.0. For a B2B SaaS API, which would you choose and why? How would you handle token refresh and revocation?",
+      "expectedApproach": "Sessions: server stores state, good for server-rendered apps. JWTs: stateless, good for microservices/mobile, but hard to revoke. OAuth 2.0: authorization framework, ideal for third-party integrations. For B2B SaaS: OAuth 2.0 with JWTs as access tokens. Short-lived access tokens (15 min) + long-lived refresh tokens (stored securely). Revocation: maintain a token blacklist (Redis) or use token introspection endpoint.",
+      "keyPoints": [
+        "JWTs are stateless but cannot be revoked without a blacklist",
+        "Refresh token rotation: issue new refresh token with each refresh",
+        "PKCE flow for public clients (SPAs, mobile apps)",
+        "Store refresh tokens in httpOnly secure cookies, not localStorage"
+      ],
+      "followUps": [
+        "How would you implement role-based access control (RBAC)?",
+        "What is the difference between authentication and authorization?",
+        "How would you secure API keys in a multi-tenant system?"
+      ]
+    },
+    {
+      "topic": "Microservices",
+      "subtopic": "Communication Patterns",
+      "difficulty": "hard",
+      "company": "Google",
+      "questionType": "system_design",
+      "question": "You're splitting a monolithic e-commerce application into microservices. How would you handle a checkout operation that requires coordination across Order, Payment, and Inventory services? Discuss the Saga pattern.",
+      "expectedApproach": "Saga pattern for distributed transactions (no distributed ACID). Choreography (event-driven): each service publishes events → next service reacts. Orchestration (central coordinator): an Orchestrator service directs the flow. Compensating transactions for rollback. Example: Order created → Payment charged → Inventory reserved. If inventory fails: refund payment → cancel order. Use idempotency keys to handle retries safely.",
+      "keyPoints": [
+        "2PC (Two-Phase Commit) doesn't scale well in microservices",
+        "Saga with choreography: loose coupling, harder to trace",
+        "Saga with orchestration: centralized logic, single point of failure",
+        "Compensating transactions must be idempotent",
+        "Use event sourcing + CQRS for complex domains"
+      ],
+      "followUps": [
+        "How would you handle partial failures in a saga?",
+        "Compare message brokers: Kafka vs RabbitMQ vs SQS",
+        "How would you implement distributed tracing across services?"
+      ]
+    },
+    {
+      "topic": "Concurrency",
+      "subtopic": "Race Conditions",
+      "difficulty": "hard",
+      "company": "Meta",
+      "questionType": "coding",
+      "question": "Two users are trying to book the last remaining seat for a flight simultaneously. How would you prevent double-booking at the database level? Discuss optimistic vs pessimistic locking.",
+      "expectedApproach": "Pessimistic locking: SELECT ... FOR UPDATE locks the row during the transaction. Other transactions wait. Simple, strong guarantee, but can reduce throughput. Optimistic locking: add a version column. Read version, update with WHERE version = read_version. If another transaction changed the version, update fails (0 rows affected) → retry. Better throughput for low-contention scenarios.",
+      "keyPoints": [
+        "Pessimistic: lock → read → write → unlock (blocks other writers)",
+        "Optimistic: read → write with version check → retry on conflict",
+        "Optimistic is better when conflicts are rare (high read, low write)",
+        "Pessimistic is better for high-contention (many writers)",
+        "PostgreSQL: FOR UPDATE, FOR SHARE, advisory locks"
+      ],
+      "followUps": [
+        "How would you implement this in a distributed system with multiple DB replicas?",
+        "What is the ABA problem in optimistic locking?",
+        "How does database isolation level affect this?"
+      ]
+    },
+    {
+      "topic": "Message Queues",
+      "subtopic": "Event-Driven Architecture",
+      "difficulty": "medium",
+      "company": "Amazon",
+      "questionType": "system_design",
+      "question": "Your order processing system needs to send confirmation emails, update inventory, and generate invoices after an order is placed. Design an event-driven architecture for this. How do you ensure exactly-once processing?",
+      "expectedApproach": "Publish OrderCreated event to a message broker (Kafka/SQS/RabbitMQ). Each downstream service subscribes independently. Exactly-once is hard: use at-least-once delivery + idempotency. Idempotency key = order_id + operation. Dead letter queue for failed messages. Consider outbox pattern: write event to DB outbox table in same transaction as order, separate process publishes to broker.",
+      "keyPoints": [
+        "Exactly-once delivery is practically impossible; use at-least-once + idempotency",
+        "Outbox pattern ensures event is published even if broker is down",
+        "Dead letter queues capture messages that repeatedly fail processing",
+        "Consumer groups allow scaling consumers independently"
+      ],
+      "followUps": [
+        "How would you handle message ordering guarantees?",
+        "Compare Kafka's partition-based ordering with RabbitMQ's queue-based approach",
+        "How would you implement event sourcing with this architecture?"
+      ]
+    }
+  ]
+}

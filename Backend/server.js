@@ -1,4 +1,5 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -12,6 +13,9 @@ const resumeRoutes = require("./routes/resumeRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const codeRoutes = require("./routes/codeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const logger = require("./utils/logger");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -19,11 +23,22 @@ const cors = require("cors");
 
 const PORT = process.env.PORT || 3000;
 
-app.set("trust proxy", true);
+app.set('trust proxy', 1);
 
-app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(helmet());
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', apiLimiter);
+
+app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
 app.use(express.static("public"));
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '5mb' }));
 app.use(cookieParser());
 
 app.use(
@@ -40,7 +55,7 @@ app.use(
 // connect(); // Removed
 
 app.use((req, res, next) => {
-  console.log(req.path + " " + req.method);
+  logger.info(`${req.method} ${req.path}`);
   next();
 });
 
@@ -57,9 +72,39 @@ app.use("/api/admin", adminRoutes);
 
 
 app.get("/", (req, res) => {
-  res.send("Entervue Backend (PostgreSQL)");
+  res.send("Entervue Backend (PostgreSQL) - Production Ready");
+});
+
+// ─── Global Error Handler ───────────────────────────────────────
+app.use((err, req, res, next) => {
+  logger.error(`Error: ${err.message}`, { stack: err.stack, path: req.path });
+  
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+  const code = err.code || 'INTERNAL_ERROR';
+
+  res.status(statusCode).json({
+    error: message,
+    code: code
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
+});
+
+// ─── Graceful Shutdown ───────────────────────────────────────────
+// Close RAG service connection pool on shutdown
+const { closePool } = require("./services/ragService");
+
+process.on("SIGTERM", async () => {
+  logger.info("SIGTERM received. Closing connections...");
+  await closePool();
+  process.exit(0);
+});
+
+process.on("SIGINT", async () => {
+  logger.info("SIGINT received. Closing connections...");
+  await closePool();
+  process.exit(0);
 });

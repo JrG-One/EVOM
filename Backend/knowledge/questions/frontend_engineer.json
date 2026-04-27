@@ -1,0 +1,169 @@
+{
+  "title": "Frontend Engineer Interview Questions",
+  "source": "curated",
+  "category": "interview_question",
+  "role": "Frontend Engineer",
+  "tags": ["frontend", "react", "javascript", "css", "web"],
+  "entries": [
+    {
+      "topic": "React",
+      "subtopic": "Component Lifecycle & Hooks",
+      "difficulty": "medium",
+      "company": "Meta",
+      "questionType": "coding",
+      "question": "Explain the difference between useEffect and useLayoutEffect. When would you use one over the other? Write a custom hook that debounces a value and explain why useEffect is appropriate there.",
+      "expectedApproach": "useEffect runs asynchronously after paint, useLayoutEffect runs synchronously before paint. Use useLayoutEffect for DOM measurements/mutations that must happen before user sees the update (e.g., tooltip positioning). Debounce hook: use useEffect with setTimeout, clean up with clearTimeout in the return function.",
+      "keyPoints": [
+        "useEffect is non-blocking (deferred after paint)",
+        "useLayoutEffect blocks the browser paint (synchronous)",
+        "Cleanup function runs before next effect and on unmount",
+        "Custom hooks must follow Rules of Hooks"
+      ],
+      "followUps": [
+        "How would you implement an infinite scroll hook using useEffect?",
+        "What are the performance implications of useLayoutEffect?",
+        "How does React 18 concurrent mode affect useEffect behavior?"
+      ]
+    },
+    {
+      "topic": "React",
+      "subtopic": "State Management",
+      "difficulty": "hard",
+      "company": "Google",
+      "questionType": "conceptual",
+      "question": "You're building a large-scale React dashboard with deeply nested components that all need access to user preferences, theme, and real-time notification data. Compare Context API, Redux, and Zustand. What would you choose and why?",
+      "expectedApproach": "Context: simple but triggers full subtree re-renders on any change. Redux: predictable, great DevTools, boilerplate-heavy, good for complex state logic. Zustand: minimal API, selective subscriptions (no re-render issue), great for medium-to-large apps. For this case: Zustand for preferences/theme (simple, performant) + separate Context for auth, WebSocket for real-time notifications. Avoid putting rapidly-changing data in Context.",
+      "keyPoints": [
+        "Context API re-renders all consumers on any state change",
+        "Redux is best when you need time-travel debugging and middleware",
+        "Zustand/Jotai offer surgical re-renders via selectors",
+        "Don't put everything in one global store — separate concerns"
+      ],
+      "followUps": [
+        "How would you handle server state (API data) vs client state?",
+        "Compare React Query/TanStack Query with Redux for API data",
+        "How would you implement optimistic updates?"
+      ]
+    },
+    {
+      "topic": "JavaScript",
+      "subtopic": "Event Loop & Async",
+      "difficulty": "hard",
+      "company": "Amazon",
+      "questionType": "conceptual",
+      "question": "Explain the JavaScript event loop, microtask queue, and macrotask queue. Given this code, predict the output order: console.log('1'); setTimeout(() => console.log('2'), 0); Promise.resolve().then(() => console.log('3')); console.log('4');",
+      "expectedApproach": "Output: 1, 4, 3, 2. Synchronous code runs first (1, 4). Promise.then() goes to microtask queue (3). setTimeout goes to macrotask queue (2). Microtasks are processed before the next macrotask. Event loop: call stack → microtasks (all) → one macrotask → microtasks → repeat.",
+      "keyPoints": [
+        "Call stack executes synchronous code first",
+        "Microtasks (Promises, queueMicrotask) drain completely before macrotasks",
+        "Macrotasks: setTimeout, setInterval, I/O, UI rendering",
+        "Each macrotask is followed by draining all microtasks"
+      ],
+      "followUps": [
+        "What happens if a microtask enqueues another microtask?",
+        "How does requestAnimationFrame fit into the event loop?",
+        "Explain how async/await is syntactic sugar over Promises"
+      ]
+    },
+    {
+      "topic": "CSS & Layout",
+      "subtopic": "Responsive Design",
+      "difficulty": "medium",
+      "company": "Microsoft",
+      "questionType": "coding",
+      "question": "Implement a responsive grid layout that shows 4 columns on desktop, 2 on tablet, and 1 on mobile. Use CSS Grid. Also explain the difference between minmax(), auto-fill, and auto-fit.",
+      "expectedApproach": "Use CSS Grid with grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); for automatic responsiveness. Or use explicit breakpoints with @media queries. auto-fill creates as many tracks as possible (may leave empty tracks), auto-fit collapses empty tracks. minmax() sets minimum and maximum track sizes.",
+      "keyPoints": [
+        "CSS Grid with auto-fit/minmax() enables responsive layouts without media queries",
+        "auto-fill: keeps empty tracks, auto-fit: collapses empty tracks to fill space",
+        "fr unit distributes remaining space proportionally",
+        "Mobile-first approach: start with 1 column, add columns at breakpoints"
+      ],
+      "followUps": [
+        "When would you use Flexbox vs Grid?",
+        "How would you implement a masonry layout with CSS Grid?",
+        "Explain the CSS container queries and how they differ from media queries"
+      ]
+    },
+    {
+      "topic": "Performance",
+      "subtopic": "Web Vitals & Optimization",
+      "difficulty": "hard",
+      "company": "Google",
+      "questionType": "conceptual",
+      "question": "A React application has a First Contentful Paint (FCP) of 4.5 seconds and a Largest Contentful Paint (LCP) of 7 seconds. Walk through your debugging and optimization process to bring these under the 'Good' thresholds.",
+      "expectedApproach": "Good thresholds: FCP < 1.8s, LCP < 2.5s. Debug: Use Chrome DevTools Performance tab, Lighthouse, Web Vitals extension. Common fixes: (1) Code splitting with React.lazy + Suspense, (2) Image optimization (WebP, lazy loading, srcset), (3) Critical CSS inlining, (4) Server-side rendering or static generation, (5) Reduce JS bundle (tree shaking, dynamic imports), (6) CDN for assets, (7) Preconnect/preload for critical resources.",
+      "keyPoints": [
+        "LCP targets: < 2.5s good, < 4.0s needs improvement, > 4.0s poor",
+        "Code splitting is the #1 quick win for React apps",
+        "Image optimization often has the largest impact on LCP",
+        "Measure before and after every optimization"
+      ],
+      "followUps": [
+        "How does React 18 streaming SSR improve TTFB and FCP?",
+        "Explain Cumulative Layout Shift (CLS) and how to fix it",
+        "How would you implement progressive hydration?"
+      ]
+    },
+    {
+      "topic": "Browser Internals",
+      "subtopic": "Rendering Pipeline",
+      "difficulty": "medium",
+      "company": "Meta",
+      "questionType": "conceptual",
+      "question": "Explain the browser's critical rendering path. What happens between receiving the HTML response and the first pixel appearing on screen?",
+      "expectedApproach": "1. Parse HTML → build DOM tree. 2. Parse CSS → build CSSOM. 3. Combine DOM + CSSOM → Render Tree (visible elements only). 4. Layout (reflow): calculate exact position and size of each element. 5. Paint: fill in pixels (colors, borders, shadows, text). 6. Composite: layer management, GPU compositing. JS can block parsing unless async/defer. CSS blocks rendering.",
+      "keyPoints": [
+        "HTML parsing can be blocked by synchronous <script> tags",
+        "CSS is render-blocking: browser won't paint until CSSOM is ready",
+        "async vs defer: async = download + execute ASAP; defer = download now, execute after parsing",
+        "Compositor layers enable GPU-accelerated animations (transform, opacity)"
+      ],
+      "followUps": [
+        "What's the difference between a repaint and a reflow?",
+        "Which CSS properties trigger layout vs paint vs composite?",
+        "How does virtual DOM diffing relate to the rendering pipeline?"
+      ]
+    },
+    {
+      "topic": "TypeScript",
+      "subtopic": "Advanced Types",
+      "difficulty": "hard",
+      "company": "Google",
+      "questionType": "coding",
+      "question": "Write a TypeScript generic type 'DeepReadonly<T>' that makes all properties of an object and all nested objects recursively readonly. Then write a type 'PickByType<T, ValueType>' that picks only properties of a specific type.",
+      "expectedApproach": "DeepReadonly: use mapped type with conditional recursion: type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K] }. PickByType: use key filtering: type PickByType<T, V> = { [K in keyof T as T[K] extends V ? K : never]: T[K] }.",
+      "keyPoints": [
+        "Mapped types iterate over keys of an object type",
+        "Conditional types (extends) enable type-level if/else",
+        "Key remapping (as clause) can filter keys",
+        "Recursive types need a base case to avoid infinite recursion"
+      ],
+      "followUps": [
+        "How would you make DeepReadonly handle arrays and tuples?",
+        "Explain the difference between 'type' and 'interface' for this use case",
+        "Write a type that converts union to intersection"
+      ]
+    },
+    {
+      "topic": "Accessibility",
+      "subtopic": "ARIA & Semantic HTML",
+      "difficulty": "medium",
+      "company": "Microsoft",
+      "questionType": "conceptual",
+      "question": "You're building a custom dropdown/select component in React. How would you make it fully accessible? Cover keyboard navigation, screen reader support, and ARIA attributes.",
+      "expectedApproach": "Use role='listbox' for the dropdown, role='option' for items. aria-expanded on trigger button, aria-activedescendant for focused option, aria-selected for selected option. Keyboard: Enter/Space to open, Up/Down to navigate, Escape to close, Home/End for first/last. Focus management: focus trap when open, return focus to trigger on close.",
+      "keyPoints": [
+        "WCAG 2.1 AA compliance is the standard target",
+        "Prefer native HTML elements (<select>, <button>) when possible",
+        "aria-live='polite' for dynamic content announcements",
+        "Test with actual screen readers (NVDA, VoiceOver), not just ARIA validators"
+      ],
+      "followUps": [
+        "How do you handle focus management in a modal dialog?",
+        "What's the difference between aria-label, aria-labelledby, and aria-describedby?",
+        "How would you test accessibility in CI/CD?"
+      ]
+    }
+  ]
+}

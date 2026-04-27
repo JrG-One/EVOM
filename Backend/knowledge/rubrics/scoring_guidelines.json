@@ -1,0 +1,53 @@
+{
+  "title": "Interview Scoring Guidelines & Rubrics",
+  "source": "curated",
+  "category": "rubric",
+  "tags": ["scoring", "rubric", "evaluation", "guidelines"],
+  "entries": [
+    {
+      "topic": "Coding Round Scoring",
+      "subtopic": "Technical Problem Solving",
+      "difficulty": "medium",
+      "questionType": "rubric",
+      "question": "How should a coding interview response be scored? What differentiates a 3/10 from a 7/10 from a 10/10?",
+      "expectedApproach": "Score on multiple dimensions: correctness, efficiency, code quality, communication, edge cases.",
+      "keyPoints": [
+        "Score 1-3 (Poor): Cannot identify the problem type. No working solution. Poor communication.",
+        "Score 4-5 (Below Average): Identifies approach but cannot implement fully. Brute force solution only. Misses edge cases.",
+        "Score 6-7 (Good): Working solution with reasonable efficiency. Handles most edge cases. Clean code. Good communication of thought process.",
+        "Score 8-9 (Excellent): Optimal or near-optimal solution. Handles all edge cases. Clean, production-quality code. Discusses trade-offs proactively.",
+        "Score 10 (Outstanding): Optimal solution with excellent code quality. Considers multiple approaches and justifies choice. Proactively discusses testing, scalability, and real-world applications."
+      ]
+    },
+    {
+      "topic": "System Design Scoring",
+      "subtopic": "Architecture & Scalability",
+      "difficulty": "hard",
+      "questionType": "rubric",
+      "question": "How should a system design interview response be evaluated? What are the key dimensions?",
+      "expectedApproach": "Evaluate on: requirements gathering, high-level design, component design, scalability, trade-offs discussion, and deep-dive knowledge.",
+      "keyPoints": [
+        "Score 1-3 (Poor): Jumps into solution without clarifying requirements. Monolithic design with no scalability consideration. No discussion of trade-offs.",
+        "Score 4-5 (Below Average): Basic architecture but missing key components. Limited scalability discussion. Doesn't consider failure modes.",
+        "Score 6-7 (Good): Clear requirements gathering. Well-structured architecture. Discusses caching, load balancing, databases. Considers failure scenarios.",
+        "Score 8-9 (Excellent): Comprehensive design covering all aspects. Deep knowledge of distributed systems. Quantifies with back-of-envelope calculations. Proactively discusses monitoring and deployment.",
+        "Score 10 (Outstanding): All of the above plus novel insights, experience-backed recommendations, and clear articulation of why alternatives were not chosen."
+      ]
+    },
+    {
+      "topic": "Behavioral Round Scoring",
+      "subtopic": "Soft Skills & Leadership",
+      "difficulty": "medium",
+      "questionType": "rubric",
+      "question": "How should behavioral interview responses be evaluated? What makes a strong behavioral answer?",
+      "expectedApproach": "Use STAR method compliance, specificity, impact quantification, self-awareness, and growth demonstration.",
+      "keyPoints": [
+        "Score 1-3 (Poor): Vague, hypothetical answers ('I would do X'). Cannot provide specific examples. Blames others for failures. No self-awareness.",
+        "Score 4-5 (Below Average): Real examples but lacking detail. No quantified impact. STAR method partially followed. Limited self-reflection.",
+        "Score 6-7 (Good): Clear STAR structure. Specific examples with measurable outcomes. Shows self-awareness and lessons learned. Demonstrates ownership.",
+        "Score 8-9 (Excellent): Strong stories with impressive impact. Multiple perspectives considered. Clear growth trajectory. Authentic and reflective.",
+        "Score 10 (Outstanding): Compelling narratives with exceptional impact. Shows leadership, mentoring, and org-wide influence. Deeply self-aware with a track record of continuous improvement."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "title": "Behavioral & HR Interview Questions",
+  "source": "curated",
+  "category": "interview_question",
+  "role": null,
+  "tags": ["behavioral", "hr", "soft-skills", "star-method", "leadership"],
+  "entries": [
+    {
+      "topic": "Leadership & Initiative",
+      "subtopic": "Taking Ownership",
+      "difficulty": "medium",
+      "questionType": "behavioral",
+      "question": "Tell me about a time when you identified a significant problem in your team or project and took the initiative to solve it without being asked.",
+      "expectedApproach": "Use STAR method: Situation (what was the context?), Task (what needed to be done?), Action (what specifically did YOU do?), Result (what was the measurable outcome?). Look for: proactiveness, problem identification, impact quantification.",
+      "keyPoints": [
+        "Strong answers include specific metrics (saved X hours, reduced bugs by Y%)",
+        "Shows self-motivation and proactiveness",
+        "Mentions how they got buy-in from the team or manager",
+        "Addresses both the technical and people aspects"
+      ],
+      "sampleAnswer": "STAR: Noticed CI builds taking 45 minutes → investigated, found redundant test suites → proposed parallel test strategy → reduced to 12 minutes → team saved 20+ hours/week collectively.",
+      "followUps": [
+        "How did you prioritize this over your regular work?",
+        "Did you face any resistance? How did you handle it?",
+        "What would you do differently if you could do it again?"
+      ]
+    },
+    {
+      "topic": "Conflict Resolution",
+      "subtopic": "Disagreement with Team",
+      "difficulty": "medium",
+      "questionType": "behavioral",
+      "question": "Describe a situation where you had a strong disagreement with a colleague about a technical decision. How did you resolve it?",
+      "expectedApproach": "STAR method. Good answers show: actively listening to the other perspective, using data/evidence rather than opinions, willingness to compromise, focusing on what's best for the project (not ego), escalating appropriately if needed.",
+      "keyPoints": [
+        "Shows emotional intelligence and professional maturity",
+        "Uses data and evidence to support positions",
+        "Demonstrates respect for differing viewpoints",
+        "Results in a constructive outcome (not just 'winning')"
+      ],
+      "sampleAnswer": "STAR: Disagreed on microservices vs monolith → organized a technical evaluation with clear criteria → built small prototypes of both → data showed monolith was better for our scale → colleague agreed → shipped 3 weeks faster.",
+      "followUps": [
+        "What if the disagreement was with your manager?",
+        "Have you ever been wrong in a technical debate? What happened?",
+        "How do you build consensus in a team with strong opinions?"
+      ]
+    },
+    {
+      "topic": "Failure & Learning",
+      "subtopic": "Learning from Mistakes",
+      "difficulty": "medium",
+      "questionType": "behavioral",
+      "question": "Tell me about a time when a project you worked on failed or didn't meet expectations. What did you learn from it?",
+      "expectedApproach": "STAR method. Strong candidates are honest about failures and take ownership (not blaming others). They articulate specific lessons learned and how they applied those lessons to future work. Interviewers are testing for self-awareness and growth mindset.",
+      "keyPoints": [
+        "Honesty and ownership (no blame-shifting)",
+        "Specific, concrete example (not vague)",
+        "Clear articulation of lessons learned",
+        "Evidence of applying those lessons to subsequent work"
+      ],
+      "sampleAnswer": "STAR: Underestimated migration complexity → hit production issues → learned to always do staged rollouts → next migration: blue-green deployment, zero downtime → now it's our team's standard process.",
+      "followUps": [
+        "How do you handle pressure when things go wrong in production?",
+        "What systems do you put in place to prevent similar failures?",
+        "How do you balance moving fast with being careful?"
+      ]
+    },
+    {
+      "topic": "Collaboration",
+      "subtopic": "Cross-functional Work",
+      "difficulty": "medium",
+      "questionType": "behavioral",
+      "question": "Describe a time when you had to work closely with a non-technical stakeholder (PM, designer, business team). How did you bridge the communication gap?",
+      "expectedApproach": "STAR method. Good answers show ability to translate technical concepts into business language, active listening to understand stakeholder needs, setting realistic expectations, and finding win-win solutions. Avoid jargon and create shared understanding.",
+      "keyPoints": [
+        "Translates technical complexity to business impact",
+        "Builds trust through transparent communication",
+        "Sets and manages expectations realistically",
+        "Creates shared artifacts (docs, mockups, demos) for alignment"
+      ],
+      "followUps": [
+        "How do you handle scope creep from non-technical stakeholders?",
+        "How do you say 'no' to a feature request without damaging the relationship?",
+        "How do you estimate and communicate timelines?"
+      ]
+    },
+    {
+      "topic": "Time Management",
+      "subtopic": "Prioritization",
+      "difficulty": "medium",
+      "questionType": "behavioral",
+      "question": "Tell me about a time when you had multiple urgent tasks with competing deadlines. How did you prioritize and manage your time?",
+      "expectedApproach": "STAR method. Look for: clear prioritization framework (urgency × impact matrix, MoSCoW), communication with stakeholders about trade-offs, delegation when appropriate, ability to say no or push back on timelines with justification.",
+      "keyPoints": [
+        "Uses a structured prioritization approach",
+        "Communicates trade-offs to stakeholders proactively",
+        "Knows when to delegate or ask for help",
+        "Distinguishes between urgent and important"
+      ],
+      "followUps": [
+        "How do you handle context switching between different workstreams?",
+        "When have you had to push back on unrealistic deadlines?",
+        "How do you protect your focus time for deep work?"
+      ]
+    },
+    {
+      "topic": "Amazon Leadership Principles",
+      "subtopic": "Customer Obsession",
+      "difficulty": "medium",
+      "company": "Amazon",
+      "questionType": "behavioral",
+      "question": "Give me an example of a time when you went above and beyond what was expected to deliver a great experience for the end user or customer.",
+      "expectedApproach": "STAR method aligned with Amazon's Customer Obsession principle. Start from the customer and work backwards. Show deep empathy for user needs, willingness to make tough technical decisions in favor of user experience, and measurable impact on customer satisfaction.",
+      "keyPoints": [
+        "Amazon values: 'Start with the customer and work backwards'",
+        "Quantify the impact on customers (response time, satisfaction scores, adoption)",
+        "Show willingness to put in extra effort for user experience",
+        "Demonstrate understanding that engineering decisions affect real users"
+      ],
+      "followUps": [
+        "How do you balance customer requests with technical constraints?",
+        "When have you had to say no to a customer to make the right long-term decision?",
+        "How do you gather customer feedback and incorporate it?"
+      ]
+    },
+    {
+      "topic": "Amazon Leadership Principles",
+      "subtopic": "Dive Deep",
+      "difficulty": "hard",
+      "company": "Amazon",
+      "questionType": "behavioral",
+      "question": "Tell me about a time when you had to dive deep into data or a complex system to find the root cause of a critical issue.",
+      "expectedApproach": "STAR method aligned with Amazon's Dive Deep principle. Show systematic debugging approach: metrics analysis, log analysis, hypothesis formation and testing. Go beyond surface-level symptoms to true root causes. Leaders are expected to operate at all levels and stay connected to details.",
+      "keyPoints": [
+        "Systematic debugging process (not random guessing)",
+        "Uses metrics, logs, and data to form hypotheses",
+        "Root cause analysis (not just fixing symptoms)",
+        "Documents findings and puts preventive measures in place"
+      ],
+      "followUps": [
+        "How do you decide when to stop diving deeper?",
+        "How do you communicate technical complexity to non-technical leadership?",
+        "How do you balance diving deep with maintaining broad perspective?"
+      ]
+    }
+  ]
+}

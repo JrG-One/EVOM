@@ -29,14 +29,14 @@ const AdminLayout = () => {
     ];
 
     const SidebarContent = () => (
-        <div className="flex flex-col h-full bg-[#0A0A0F] border-r border-white/5">
+        <div className="flex flex-col h-full bg-sidebar border-r border-border">
             {/* Brand */}
             <div className="p-6 flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-tr from-purple-600 to-blue-600 rounded-xl">
-                    <ShieldAlert className="w-5 h-5 text-white" />
+                <div className="p-2 bg-gradient-to-tr from-primary to-secondary rounded-xl">
+                    <ShieldAlert className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <span className={`font-black tracking-tighter text-xl transition-opacity duration-300 ${!isSidebarOpen && 'lg:opacity-0'}`}>
-                    Admin<span className="text-purple-500">Whiz</span>
+                    Admin<span className="text-primary">Whiz</span>
                 </span>
             </div>
 
@@ -49,8 +49,8 @@ const AdminLayout = () => {
                         className={({ isActive }) => `
               flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group
               ${isActive
-                                ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/20 text-white'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'}
+                                ? 'bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/20 text-foreground'
+                                : 'text-muted-foreground hover:text-foreground hover:bg-accent'}
             `}
                     >
                         <item.icon className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110`} />
@@ -62,21 +62,21 @@ const AdminLayout = () => {
             </nav>
 
             {/* Profile/Footer */}
-            <div className="p-4 border-t border-white/5">
+            <div className="p-4 border-t border-border">
                 <div className={`
-          flex items-center gap-3 p-3 rounded-2xl bg-white/[0.02] border border-white/5
+          flex items-center gap-3 p-3 rounded-2xl bg-accent/50 border border-border
           ${!isSidebarOpen && 'lg:justify-center lg:p-2'}
         `}>
-                    <div className="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/20 flex items-center justify-center text-primary font-bold">
                         {authUser?.username?.[0]?.toUpperCase()}
                     </div>
                     <div className={`flex-1 min-w-0 ${!isSidebarOpen && 'lg:hidden'}`}>
-                        <p className="text-sm font-bold truncate text-white">{authUser?.username}</p>
-                        <p className="text-[10px] uppercase tracking-wider text-gray-500 font-black">{authUser?.role}</p>
+                        <p className="text-sm font-bold truncate text-foreground">{authUser?.username}</p>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-black">{authUser?.role}</p>
                     </div>
                     <button
                         onClick={logout}
-                        className={`p-2 text-gray-500 hover:text-red-400 transition-colors ${!isSidebarOpen && 'lg:hidden'}`}
+                        className={`p-2 text-muted-foreground hover:text-destructive transition-colors ${!isSidebarOpen && 'lg:hidden'}`}
                     >
                         <LogOut className="w-4 h-4" />
                     </button>
@@ -86,7 +86,7 @@ const AdminLayout = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#030303] text-white flex overflow-hidden">
+        <div className="min-h-screen bg-background text-foreground flex overflow-hidden">
             {/* PC Sidebar */}
             <aside className={`
         hidden lg:block transition-all duration-500 ease-in-out relative z-30
@@ -95,7 +95,7 @@ const AdminLayout = () => {
                 <SidebarContent />
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="absolute -right-3 top-20 w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white border-2 border-[#030303] hover:scale-110 transition-all shadow-lg"
+                    className="absolute -right-3 top-20 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground border-2 border-background hover:scale-110 transition-all shadow-lg"
                 >
                     {isSidebarOpen ? <ChevronLeft className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
                 </button>
@@ -117,10 +117,10 @@ const AdminLayout = () => {
             {/* Main Content */}
             <main className="flex-1 flex flex-col h-screen overflow-hidden">
                 {/* Mobile Header */}
-                <header className="lg:hidden p-4 flex items-center justify-between bg-[#0A0A0F] border-b border-white/5">
+                <header className="lg:hidden p-4 flex items-center justify-between bg-sidebar border-b border-border">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-tr from-purple-600 to-blue-600 rounded-lg">
-                            <ShieldAlert className="w-4 h-4 text-white" />
+                        <div className="p-2 bg-gradient-to-tr from-primary to-secondary rounded-lg">
+                            <ShieldAlert className="w-4 h-4 text-primary-foreground" />
                         </div>
                         <span className="font-black tracking-tighter">AdminWhiz</span>
                     </div>

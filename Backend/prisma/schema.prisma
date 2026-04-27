@@ -73,6 +73,9 @@ model Interview {
   
   // Storing questions as JSON to be flexible with structure
   questions         Json?    
+  
+  // Storing the array of conversation messages
+  chatHistory       Json?    @default("[]")
 
   userId            String
   user              User     @relation(fields: [userId], references: [id])
@@ -86,4 +89,43 @@ model Resource {
   description String
   thumbnail   String
   link        String
+}
+
+// ─── RAG Knowledge Base ───────────────────────────────────────────
+
+model KnowledgeDocument {
+  id        String   @id @default(uuid())
+  title     String
+  source    String   @default("curated") // curated, scraped, user_contributed
+  category  String   // interview_question, rubric, competency_framework, company_pattern
+  company   String?  // nullable — applies to all companies if null
+  role      String?  // nullable — applies to all roles if null
+  difficulty String? // easy, medium, hard, expert
+  tags      String[] // e.g., ["dsa", "arrays", "google", "behavioral"]
+  metadata  Json?    // flexible extra data
+  checksum  String?  @unique // SHA-256 hash for deduplication
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chunks    KnowledgeChunk[]
+
+  @@index([category])
+  @@index([company])
+  @@index([role])
+}
+
+model KnowledgeChunk {
+  id          String   @id @default(uuid())
+  documentId  String
+  document    KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  content     String   // The actual text content of this chunk
+  chunkIndex  Int      // Order within the parent document
+  tokenCount  Int      @default(0)
+  metadata    Json?    // flexible extra data (topic, subtopic, etc.)
+  // NOTE: 'embedding' vector(1536) column is added via raw SQL migration
+
+  createdAt   DateTime @default(now())
+
+  @@index([documentId])
 }

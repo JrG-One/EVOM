@@ -8,88 +8,100 @@ const { cleanMarkdown } = require("../utils/cleanMarkdown");
 
 exports.generateAnalysis = async (req, res) => {
   try {
-    const { feedback, interviewId, formData } = req.body;
-    const { name, role, company, experience, preferredLanguage, codingRound } =
-      formData || {};
+    const { interviewId } = req.body;
 
-    const systemContext =
-      "Assume the role of an experienced interviewer with 20+ years of experience. Provide a detailed markdown interview analysis report.";
+    if (!interviewId) {
+      return res.status(400).json({ error: "interviewId is required." });
+    }
 
-    const prompt = `
-Using the following candidate details and performance feedback, provide a complete markdown interview report.
+    const interview = await prisma.interview.findUnique({
+      where: { id: interviewId },
+      include: { user: true }
+    });
 
-👤 Candidate Details
-- Name: ${name}
-- Role: ${role}
-- Company: ${company}
-- Experience: ${experience} years
-- Preferred Language: ${prefferedLanguage}
-- Interview Type: ${codingRound ? "Technical" : "Behavioural"}
+    if (!interview) {
+      return res.status(404).json({ error: "Interview not found." });
+    }
 
-📝 Feedback Summary
-${feedback}
+    const formData = {
+      name: interview.user?.username || "Candidate",
+      role: interview.role,
+      company: interview.company,
+      experience: interview.experience,
+      preferredLanguage: interview.preferredLanguage,
+      codingRound: interview.codingRound
+    };
 
-📄 Generate the following sections in Markdown:
-1. Areas Tested and Scores (each topic out of 10)
-2. Overall Score (out of 10)
-3. Strength Topics
-4. Weakness Topics
-5. Areas for Improvement
-6. Interviewer Comments
-7. Additional Comments
+    const { name, role, company, experience, preferredLanguage, codingRound } = formData;
 
-📦 At the end, return a JSON object with topic-wise scores in this format with headin Topic-wise Score:
-\`\`\`json
-{
-  "Data Structures": 7,
-  "Algorithms": 9,
-  "System Design": 6
-}
-\`\`\`
+    let chatHistory = interview.chatHistory ? (typeof interview.chatHistory === 'string' ? JSON.parse(interview.chatHistory) : interview.chatHistory) : [];
+    const feedback = chatHistory.map((msg) => `${msg.role.toUpperCase()}: ${msg.content}`).join("\n\n");
+
+    const systemContext = `
+Role: You are a Lead Technical Interviewer and Talent Architect with 20+ years of experience in technical recruitment for Tier-1 tech companies.
+
+Objective: Analyze the provided interview transcript and generate a high-fidelity, actionable performance report.
+
+Details:
+- Focus on technical accuracy, depth of explanations, and problem-solving methodology.
+- Evaluate soft skills: communication, clarity, and attitude.
+- Provide constructive, specific feedback that a candidate can use to improve.
+- Use a professional, objective, yet encouraging tone.
+
+Grading Rubric (0.0 to 10.0):
+- 0-4: Significant gaps in core knowledge or major red flags.
+- 5-6: Basic understanding but lacks depth or has several errors.
+- 7-8: Strong performance, good problem solving, minor errors only.
+- 9-10: Exceptional performance, demonstrates mastery and senior-level thinking.
 `;
 
-    const content = await createChatCompletion(systemContext, prompt);
+    const prompt = `
+Task: Generate a comprehensive Interview Analysis Report.
+
+Candidate Data:
+- Name: ${name}
+- Target Role: ${role}
+- Target Company: ${company}
+- Seniority: ${experience} years experience
+- Stack: ${preferredLanguage}
+- Mode: ${codingRound ? "Technical/Coding Focus" : "Behavioral/Theory Focus"}
+
+Transcript:
+${feedback}
+
+Return a JSON object STRICTLY matching this exact schema:
+{
+  "report": "## Executive Summary\\n[Summary of overall performance]\\n\\n## Technical Proficiency\\n[Detailed analysis of technical answers]\\n\\n## Problem Solving & Logic\\n[Analysis of their approach]\\n\\n## Communication & Soft Skills\\n[Analysis of how they explained concepts]\\n\\n## Key Strengths\\n- [Strength 1]\\n- [Strength 2]\\n\\n## Areas for Improvement\\n- [Area 1]\\n- [Area 2]\\n\\n## Interviewer Verdict\\n[Final recommendation]",
+  "overallScore": 0.0,
+  "topicScores": {
+    "Technical Depth": 0.0,
+    "Problem Solving": 0.0,
+    "Communication": 0.0
+  }
+}
+
+Sense Check: Ensure the overallScore is a weighted average of the topicScores. Ensure the report text is valid Markdown.
+`;
+
+    const content = await createChatCompletion(systemContext, prompt, { response_format: { type: "json_object" } });
     if (!content) {
       return res.status(500).json({ error: "OpenAI response is empty." });
     }
 
-    const markdown = cleanMarkdown(content);
+    let parsedContent;
+    try {
+      parsedContent = JSON.parse(content);
+    } catch (err) {
+      console.error("Failed to parse JSON response from OpenAI:", err);
+      return res.status(500).json({ error: "Invalid JSON response from AI." });
+    }
+
+    const markdown = cleanMarkdown(parsedContent.report || "");
+    const overallScore = parseFloat(parsedContent.overallScore) || 0;
+    const topicScores = parsedContent.topicScores || {};
+
     console.log("📄 Cleaned Markdown:", markdown);
-
-    const scoreMatch = markdown.match(/Overall Score\s*[:\-]?\s*(\d+(\.\d+)?)/i);
-    if (!scoreMatch) {
-      return res.status(500).json({ error: "Could not extract overall score." });
-    }
-    const overallScore = parseFloat(scoreMatch[1]);
-
-    // Robust JSON extraction
-    let topicScores = {};
-
-    const jsonRegex = /```json\s*({[\s\S]*?})\s*```/i;
-    const fallbackJsonRegex = /({[\s\S]*})$/; // fallback for AI returning plain JSON
-
-    let rawJson = null;
-
-    const jsonMatch = markdown.match(jsonRegex);
-    if (jsonMatch && jsonMatch[1]) {
-      rawJson = jsonMatch[1];
-    } else {
-      const fallbackMatch = markdown.match(fallbackJsonRegex);
-      if (fallbackMatch && fallbackMatch[1]) {
-        rawJson = fallbackMatch[1];
-      }
-    }
-
-    if (rawJson) {
-      try {
-        topicScores = JSON.parse(rawJson.trim());
-        console.log("✅ Extracted topicScores JSON:", topicScores);
-      } catch (err) {
-        console.error("❌ Failed to parse topicScores JSON:", err);
-      }
-    } else {
-      console.warn("⚠️ No topicScores JSON found in markdown.");
-    }
+    console.log("✅ Extracted topicScores JSON:", topicScores);
 
 
     const pdfPath = await generatePDFReport(markdown, overallScore, formData, topicScores);

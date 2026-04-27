@@ -96,11 +96,11 @@ const ResponsePanel = ({ defaultSize = 50 }) => {
           </div>
 
           <div className="flex-1 flex flex-col p-8 relative z-10">
-            <form onSubmit={handleSubmit} className="flex flex-col h-full">
-              <div className="flex-1 relative group">
+            <form onSubmit={handleSubmit} className="flex flex-col h-full overflow-hidden">
+              <div className="flex-1 relative group overflow-hidden flex flex-col">
                 <Textarea
                   placeholder={isVoiceMode ? "Interviewer is listening... Speak your answer or type here." : "Draft your response here..."}
-                  className="w-full h-full resize-none bg-transparent border-none text-white/90 placeholder:text-white/50 focus-visible:ring-0 p-0 text-lg leading-relaxed selection:bg-purple-500/30"
+                  className="flex-1 w-full resize-none bg-transparent border-none text-white/90 placeholder:text-white/50 focus-visible:ring-0 p-0 text-lg leading-relaxed selection:bg-purple-500/30 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent hover:scrollbar-thumb-purple-500/40"
                   value={userInput}
                   onChange={handleInputChange}
                   disabled={generatingResponse || isSpeaking}

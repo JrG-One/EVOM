@@ -27,6 +27,9 @@ const requireAuth = async (req, res, next) => {
 
     // Remove password from request user object
     delete user.password;
+    if (!user) {
+        return res.status(401).json({ error: 'Unauthorized' }); // ← must RETURN
+    }
     req.user = user;
     next();
   } catch (error) {

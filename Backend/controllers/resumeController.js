@@ -105,101 +105,26 @@ exports.uploadResume = async (req, res) => {
 };
 
 exports.calculateATS = async (req, res) => {
-  try {
-    const { resumeUrl, resumeText } = req.body;
-
-    if (!resumeUrl && !resumeText) {
-      return res.status(400).json({ error: "Resume content is required." });
-    }
-
-    const systemPrompt =
-      "Assume the role of an expert technical recruiter and ATS specialist. The user has provided a Base64 encoded PDF file. READ and DECODE the content to evaluate the candidate.\n\nCalculate the ATS score (0-100) based on:\n1. Keyword matching (tech stack, skills)\n2. Quantifiable results (metrics, numbers)\n3. Formatting and structure\n\nReturn EXACTLY and ONLY the numeric score (e.g., '85').";
-
-    // Pass Base64 text
-    const contentToAnalyze = resumeText || `Resume URL: ${resumeUrl}`;
-    const userPrompt = `Resume Content (Base64 Encoded PDF):\n${contentToAnalyze}`;
-
-    // Get ATS score using OpenAI API
-    const atsScore = await createChatCompletion(systemPrompt, userPrompt);
-    const atsScoreNumber = parseInt(atsScore, 10);
-    console.log("ATS Score Response:", atsScore);
-
-    res.status(200).json({
-      message: "ATS score calculated successfully.",
-      atsScore: atsScore,
-    });
-  } catch (error) {
-    console.error("Error calculating ATS:", error);
-    res.status(500).json({ message: "Failed to calculate ATS score." });
-  }
+  return res.status(200).json({
+    message: "Feature coming soon.",
+    atsScore: "N/A",
+    comingSoon: true
+  });
 };
 
 exports.getOverallComments = async (req, res) => {
-  try {
-    const { resumeUrl, resumeText } = req.body;
-
-    if (!resumeUrl && !resumeText) {
-      return res.status(400).json({ error: "Resume content is required." });
-    }
-
-    const systemPrompt =
-      "Assume the role of a senior technical recruiter. The user has provided a Base64 encoded PDF. READ and DECODE it to provide detailed feedback.\n\n" +
-      "CRITICAL: NEVER mention that you are reading 'encoded content', 'base64', or that you 'cannot read the file'. You have full capability to decode and analyze this document. If you see binary patterns, interpret them as a professional resume.\n\n" +
-      "YOU MUST CITE SPECIFIC EXAMPLES from the resume (e.g., specific companies, projects, or metrics mentioned).\n\n" +
-      "Structure your response exactly as follows:\n" +
-      "STRENGTHS:\n" +
-      "- [Bullet point 1 with specific citation]\n" +
-      "- [Bullet point 2 with specific citation]\n\n" +
-      "IMPROVEMENTS:\n" +
-      "- [Critical weak point 1]\n" +
-      "- [Critical weak point 2]\n\n" +
-      "SUMMARY:\n" +
-      "- [One sentence high-level takeaway]";
-
-    // Pass Base64 text
-    const contentToAnalyze = resumeText || `Resume URL: ${resumeUrl}`;
-    const userPrompt = `Resume Content (Base64 Encoded PDF):\n${contentToAnalyze}`;
-
-    const feedback = await createChatCompletion(systemPrompt, userPrompt);
-    console.log("Feedback Response:", feedback);
-    const cleanedFeedback = cleanMarkdown(feedback);
-    res.status(200).json({
-      message: "Resume feedback generated successfully.",
-      feedback: cleanedFeedback,
-    });
-  } catch (error) {
-    console.error("Error generating feedback:", error);
-    res.status(500).json({ message: "Failed to generate resume feedback." });
-  }
+  return res.status(200).json({
+    message: "Feature coming soon.",
+    feedback: "This high-fidelity analysis feature is currently being optimized. Stay tuned!",
+    comingSoon: true
+  });
 };
 
 // Function to provide tips to improve the resume in technical fields
 exports.getImprovementTips = async (req, res) => {
-  try {
-    const { resumeUrl } = req.body;
-
-    if (!resumeUrl) {
-      return res.status(400).json({ error: "Resume URL is required." });
-    }
-
-    const systemPrompt =
-      "Assume the role of a technical recruiter. Provide tips to improve the resume for the technical job market.";
-    const userPrompt = `Resume content: ${resumeUrl}`;
-
-    const improvementTips = await createChatCompletion(
-      systemPrompt,
-      userPrompt,
-    );
-    console.log(improvementTips);
-    const cleanedTips = cleanMarkdown(improvementTips);
-    res.status(200).json({
-      message: "Resume improvement tips generated successfully.",
-      improvementTips: cleanedTips,
-    });
-  } catch (error) {
-    console.error("Error generating improvement tips:", error);
-    res
-      .status(500)
-      .json({ message: "Failed to generate resume improvement tips." });
-  }
+  return res.status(200).json({
+    message: "Feature coming soon.",
+    improvementTips: "Smart improvement tips will be available in the next release.",
+    comingSoon: true
+  });
 };

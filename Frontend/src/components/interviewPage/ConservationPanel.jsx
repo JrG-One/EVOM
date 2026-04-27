@@ -19,10 +19,12 @@ const ConversationPanel = ({ defaultSize, generatingResponse }) => {
 
   return (
     <ResizablePanel defaultSize={Number(defaultSize) || 50} minSize={30} className="relative">
-      <div className="flex flex-col h-full bg-[#030303] relative overflow-hidden">
-        {/* Background Accents */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-purple-600/5 blur-[120px] rounded-full" />
+      <div className="flex flex-col h-full bg-slate-950 relative overflow-hidden">
+        {/* Advanced Neural Atmosphere */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[140px] animate-pulse" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[140px] animate-pulse duration-[10s]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:32px_32px]"></div>
         </div>
 
         {/* Scrollable Message Area */}
@@ -54,8 +56,8 @@ const ConversationPanel = ({ defaultSize, generatingResponse }) => {
         {/* Floating Webcam Preview */}
         <div className="absolute bottom-6 right-6 z-20 w-56 h-36 shadow-2xl animate-in fade-in slide-in-from-right-4 duration-1000 group/webcam">
           <div className="relative h-full w-full group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000" />
-            <WebcamPreview className="relative h-full w-full rounded-2xl border border-white/10 overflow-hidden shadow-2xl" />
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-secondary rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000" />
+            <WebcamPreview className="relative h-full w-full rounded-2xl border border-border overflow-hidden shadow-2xl" />
           </div>
         </div>
       </div>

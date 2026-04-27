@@ -20,7 +20,7 @@ const AIVisual = ({ isSpeaking, isListening }) => {
 
                 {/* Status Indicators */}
                 <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-                    <span className={`text-[10px] font-black uppercase tracking-[0.4em] transition-colors duration-500 ${isSpeaking ? 'text-purple-400' : isListening ? 'text-blue-400' : 'text-white/20'}`}>
+                    <span className={`text-[11px] font-black uppercase tracking-[0.5em] transition-colors duration-500 ${isSpeaking ? 'text-purple-400 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : isListening ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(37,99,235,0.5)]' : 'text-slate-500'}`}>
                         {isSpeaking ? 'Synthesizing' : isListening ? 'Processing' : 'Neural Core Active'}
                     </span>
                     <div className="flex gap-1">

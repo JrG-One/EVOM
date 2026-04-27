@@ -1,0 +1,83 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: interviewwhiz_db_prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-interviewwhiz}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - internal_network
+
+  backend:
+    build: 
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: interviewwhiz_backend_prod
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+      - ENABLE_FILE_UPLOADS=false
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - internal_network
+      - sandbox_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  coderunner:
+    build:
+      context: ./Microservices/code_runner
+      dockerfile: Dockerfile
+    container_name: interviewwhiz_coderunner_prod
+    ports:
+      - "5002:5000"
+    restart: always
+    networks:
+      - sandbox_network
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: interviewwhiz_frontend_prod
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - internal_network
+
+volumes:
+  postgres_data_prod:
+
+networks:
+  internal_network:
+    driver: bridge
+  sandbox_network:
+    driver: bridge
+    internal: true

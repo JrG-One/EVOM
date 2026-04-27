@@ -31,18 +31,18 @@ const InterviewHeader = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 p-4 border-b border-white/10 backdrop-blur-xl bg-[#030303]/80 flex justify-between items-center text-white">
+    <header className="sticky top-0 z-50 p-4 border-b border-white/10 backdrop-blur-2xl bg-slate-950/80 flex justify-between items-center text-slate-100">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-          <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+          <div className="w-2 h-2 rounded-full bg-destructive animate-pulse shadow-[0_0_8px_rgba(var(--destructive),0.5)]" />
+          <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
             Interview Session
           </h1>
         </div>
 
         <div className="hidden sm:flex items-center gap-2">
           {warnings > 0 ? (
-            <Badge variant="destructive" className="bg-red-500/10 text-red-400 border-red-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold">
+            <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold">
               Warnings: {warnings}
             </Badge>
           ) : (
@@ -59,7 +59,7 @@ const InterviewHeader = ({
             onClick={onEnterFullscreen}
             variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white hover:bg-white/5 rounded-xl px-4 transition-all"
+            className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl px-4 transition-all"
           >
             <Maximize className="w-4 h-4 mr-2" />
             <span className="text-xs font-semibold">Fullscreen</span>
@@ -75,8 +75,8 @@ const InterviewHeader = ({
                 variant="ghost"
                 size="sm"
                 className={`rounded-xl px-4 font-bold text-xs uppercase tracking-wider transition-all duration-500 ${interviewShouldEnd
-                  ? "bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20"
-                  : "text-white/20 cursor-not-allowed opacity-50"
+                  ? "bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20"
+                  : "text-muted-foreground/20 cursor-not-allowed opacity-50"
                   }`}
               >
                 End Interview
@@ -84,7 +84,7 @@ const InterviewHeader = ({
               </Button>
             </TooltipTrigger>
             {!interviewShouldEnd && (
-              <TooltipContent className="bg-[#1a1a1a] border-white/10 text-gray-400 text-xs shadow-2xl">
+              <TooltipContent className="bg-popover border-border text-muted-foreground text-xs shadow-2xl">
                 The interview is still in progress
               </TooltipContent>
             )}

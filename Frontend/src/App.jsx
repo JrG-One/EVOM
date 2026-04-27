@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useAuthStore } from "./store/useAuthStore";
 import { Loader } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
 import Layout from "./Layout";
 
@@ -21,6 +22,8 @@ import {
 } from "react-router-dom";
 import PortalPage from "./pages/PortalPage";
 import CodeEditorWindow from "./components/CodeEditor/CodeEditorWindow";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { AIAgentDownModal } from "./components/AIAgentDownModal";
 
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -50,6 +53,7 @@ function SuperAdminRoute({ children }) {
     <Navigate to="/dashboard" replace />
   );
 }
+
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -149,7 +153,7 @@ function App() {
         <PrivateRoute>
           <InterviewPage />
         </PrivateRoute>
-      ),
+          ),
     },
     {
       path: "/code-test",
@@ -195,10 +199,15 @@ function App() {
     );
 
   return (
-    <div>
-      <RouterProvider router={router} />
-      <Toaster />
-    </div>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ErrorBoundary>
+        <div>
+          <RouterProvider router={router} />
+          <Toaster />
+          <AIAgentDownModal />
+        </div>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }
 

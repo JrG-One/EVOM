@@ -1,0 +1,92 @@
+{
+  "title": "Company-Specific Interview Patterns",
+  "source": "curated",
+  "category": "company_pattern",
+  "tags": ["company-specific", "interview-culture", "preparation-guide"],
+  "entries": [
+    {
+      "topic": "Company Interview Culture",
+      "subtopic": "Google Interview Process",
+      "difficulty": "medium",
+      "company": "Google",
+      "questionType": "guide",
+      "question": "What is Google's interview process and what do they evaluate? How should a candidate prepare specifically for Google interviews?",
+      "expectedApproach": "Google's process: phone screen (1-2 rounds) → onsite (4-5 rounds: 2-3 coding, 1 system design for L5+, 1 behavioral/Googleyness). Focuses heavily on algorithmic thinking and problem-solving approach. Values: showing your thought process clearly, asking clarifying questions, discussing trade-offs. System design for senior: distributed systems, large-scale architecture. Behavioral: 'Googleyness' — collaborative, humble, willing to learn.",
+      "keyPoints": [
+        "Strong emphasis on algorithms and data structures",
+        "Interviewers care about thought process, not just the answer",
+        "System design expected for L5+ (senior) and above",
+        "Googleyness: team player, humble, intellectually curious",
+        "Practice: LeetCode medium/hard focusing on trees, graphs, DP, string manipulation",
+        "Common: BFS/DFS, dynamic programming, sliding window, two pointers"
+      ]
+    },
+    {
+      "topic": "Company Interview Culture",
+      "subtopic": "Amazon Interview Process",
+      "company": "Amazon",
+      "difficulty": "medium",
+      "questionType": "guide",
+      "question": "What is Amazon's interview process and how do the Leadership Principles factor in? How should a candidate prepare?",
+      "expectedApproach": "Amazon's process: online assessment → phone screen → onsite loop (4-5 rounds). EVERY round includes behavioral questions based on Leadership Principles (LPs). Each interviewer is assigned 2-3 LPs to evaluate. Use STAR method. Coding rounds are standard DS&A. System design for SDE-II and above. Bar raiser (one interviewer from different team) has veto power.",
+      "keyPoints": [
+        "Leadership Principles are evaluated in EVERY interview round",
+        "Top LPs to prepare: Customer Obsession, Ownership, Dive Deep, Bias for Action, Deliver Results",
+        "STAR method is the expected format for behavioral answers",
+        "Bar raiser can veto — ensures company-wide quality standard",
+        "Coding: practical problem-solving, clean code, optimization",
+        "Prepare 2-3 stories per Leadership Principle"
+      ]
+    },
+    {
+      "topic": "Company Interview Culture",
+      "subtopic": "Microsoft Interview Process",
+      "company": "Microsoft",
+      "difficulty": "medium",
+      "questionType": "guide",
+      "question": "What does Microsoft's interview process look like? What are they specifically looking for in candidates?",
+      "expectedApproach": "Microsoft process: phone screen → onsite (4-5 rounds including 'As-Appropriate' final round with hiring manager). Evaluates: coding ability, system design (for senior), problem-solving, collaboration, and growth mindset. Microsoft values growth mindset heavily — willingness to learn and adapt. Coding rounds often include code review discussion and code modification. System design is often practical (design a feature for a Microsoft product).",
+      "keyPoints": [
+        "Growth mindset is a core cultural value",
+        "As-Appropriate (AA) round: hiring manager makes final call",
+        "May ask to design features for actual Microsoft products (Teams, Azure, etc.)",
+        "Coding often includes debugging existing code, not just writing from scratch",
+        "Values collaboration: 'How would you work with a team on this?'",
+        "Practical system design: design OneDrive sync, Teams messaging, etc."
+      ]
+    },
+    {
+      "topic": "Company Interview Culture",
+      "subtopic": "Meta Interview Process",
+      "company": "Meta",
+      "difficulty": "medium",
+      "questionType": "guide",
+      "question": "How does Meta (Facebook) conduct engineering interviews? What unique aspects should candidates prepare for?",
+      "expectedApproach": "Meta process: recruiter screen → phone screen (coding) → onsite (2 coding, 1 system design, 1 behavioral). Coding rounds use CoderPad (no IDE features, no autocomplete). Emphasis on writing clean, compilable code quickly. System design: often related to social features (news feed, messenger, live video). Behavioral: Meta values 'Move Fast', collaboration, impact at scale.",
+      "keyPoints": [
+        "Must write syntactically correct code (CoderPad, no IDE help)",
+        "Emphasis on speed and clean code simultaneously",
+        "System design often relates to Meta-scale problems (billions of users)",
+        "Values: Move Fast, Be Bold, Focus on Long-Term Impact",
+        "Product sense questions for senior roles (E5+)",
+        "Practice coding on a plain text editor without autocomplete"
+      ]
+    },
+    {
+      "topic": "Company Interview Culture",
+      "subtopic": "Startup Interview Process",
+      "difficulty": "easy",
+      "questionType": "guide",
+      "question": "How do startup interviews differ from big tech? What should a candidate expect and how should they prepare?",
+      "expectedApproach": "Startup interviews are typically shorter (2-3 rounds vs 5-6) and more practical. They may include: take-home projects, pair programming sessions, system design focused on their actual product, and culture-fit conversations. Startups value versatility (full-stack ability), speed of execution, ownership, and ability to work with ambiguity. Less emphasis on algorithmic puzzles, more on practical engineering skills.",
+      "keyPoints": [
+        "Take-home projects are common (24-72 hour timeframe)",
+        "Pair programming: work with an engineer on a real problem",
+        "Culture fit is heavily weighted (small team dynamics)",
+        "Expect questions about handling ambiguity and wearing multiple hats",
+        "System design focuses on their actual product/architecture",
+        "Show interest in the company's mission and product"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,311 @@
+{
+  "title": "Software Engineer — Data Structures & Algorithms",
+  "source": "curated",
+  "category": "interview_question",
+  "role": "Software Engineer",
+  "tags": ["dsa", "algorithms", "data-structures", "coding"],
+  "entries": [
+    {
+      "topic": "Arrays & Strings",
+      "subtopic": "Two Pointers",
+      "difficulty": "medium",
+      "company": "Google",
+      "questionType": "coding",
+      "question": "Given an array of integers, find all unique triplets that sum to zero. Return the list of all such triplets. Avoid duplicate triplets in the result.",
+      "expectedApproach": "Sort the array first. Use a fixed pointer and two moving pointers (left, right) to find pairs. Skip duplicates to avoid repeated triplets. Time: O(n²), Space: O(1) extra.",
+      "keyPoints": [
+        "Sorting enables efficient duplicate skipping",
+        "Two-pointer technique after fixing one element",
+        "Edge case: all zeros, all negatives, empty array",
+        "Handle duplicate elements carefully to avoid repeated triplets"
+      ],
+      "hints": [
+        "Try sorting the array first — what patterns do you see?",
+        "Can you reduce the three-sum problem to a two-sum problem?",
+        "How do you skip duplicates efficiently?"
+      ],
+      "followUps": [
+        "Can you modify this to find 4-sum (quadruplets)?",
+        "What if the target sum is not zero but a given value K?",
+        "How would you handle this if the array doesn't fit in memory?"
+      ]
+    },
+    {
+      "topic": "Arrays & Strings",
+      "subtopic": "Sliding Window",
+      "difficulty": "medium",
+      "company": "Amazon",
+      "questionType": "coding",
+      "question": "Given a string, find the length of the longest substring without repeating characters.",
+      "expectedApproach": "Use a sliding window with a HashSet/HashMap. Expand the right pointer, and when a duplicate is found, shrink from the left. Track the maximum window size. Time: O(n), Space: O(min(m,n)) where m is charset size.",
+      "keyPoints": [
+        "Sliding window pattern with variable-size window",
+        "HashMap stores character to last-seen index",
+        "Left pointer jumps past the last occurrence of duplicate",
+        "Works with any character set (ASCII, Unicode)"
+      ],
+      "hints": [
+        "What data structure can help you check for duplicates in O(1)?",
+        "Do you need to shrink the window one character at a time?",
+        "Think about what information the left pointer needs"
+      ],
+      "followUps": [
+        "What if you need to find the longest substring with at most K distinct characters?",
+        "Can you also return the actual substring, not just the length?",
+        "How does this change for a stream of characters?"
+      ]
+    },
+    {
+      "topic": "Trees & Graphs",
+      "subtopic": "Binary Trees",
+      "difficulty": "medium",
+      "company": "Microsoft",
+      "questionType": "coding",
+      "question": "Given a binary tree, find the lowest common ancestor (LCA) of two given nodes. Assume both nodes exist in the tree.",
+      "expectedApproach": "Recursive approach: if current node is null or equals either target node, return it. Recurse left and right. If both return non-null, current node is LCA. If only one is non-null, propagate it up. Time: O(n), Space: O(h) where h is tree height.",
+      "keyPoints": [
+        "Classic recursive tree traversal problem",
+        "Base cases: null node or matching node",
+        "Key insight: LCA is the split point where targets are in different subtrees",
+        "For BST, can optimise using BST property (all left < root < all right)"
+      ],
+      "hints": [
+        "What does it mean if you find one target in the left subtree and one in the right?",
+        "What if both targets are in the same subtree?",
+        "How does the base case handle a node being its own ancestor?"
+      ],
+      "followUps": [
+        "How would you solve this if parent pointers were available?",
+        "What if the tree is a BST — can you do better than O(n)?",
+        "How would you handle the case where one or both nodes don't exist?"
+      ]
+    },
+    {
+      "topic": "Trees & Graphs",
+      "subtopic": "Graph Traversal",
+      "difficulty": "medium",
+      "company": "Meta",
+      "questionType": "coding",
+      "question": "Given a 2D grid of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and formed by connecting adjacent lands horizontally or vertically.",
+      "expectedApproach": "Use BFS or DFS from each unvisited '1'. When you find a '1', start a BFS/DFS to mark all connected '1's as visited (either modify grid or use a visited set). Increment island count. Time: O(M×N), Space: O(M×N) worst case for visited/recursion.",
+      "keyPoints": [
+        "Grid traversal using BFS or DFS",
+        "Mark visited cells to avoid counting twice",
+        "4-directional movement (up, down, left, right)",
+        "Can modify grid in-place to save space (change '1' to '0')"
+      ],
+      "hints": [
+        "How is this similar to finding connected components in a graph?",
+        "What triggers you to increment the island count?",
+        "Can you use Union-Find as an alternative approach?"
+      ],
+      "followUps": [
+        "What if islands can be connected diagonally (8-directional)?",
+        "How would you find the maximum area island?",
+        "How would you handle this for a very large grid that doesn't fit in memory?"
+      ]
+    },
+    {
+      "topic": "Dynamic Programming",
+      "subtopic": "Classic DP",
+      "difficulty": "medium",
+      "company": "Amazon",
+      "questionType": "coding",
+      "question": "Given a set of coin denominations and a target amount, find the minimum number of coins needed to make the amount. If it's impossible, return -1.",
+      "expectedApproach": "Bottom-up DP: create dp array of size amount+1, initialized to Infinity. dp[0]=0. For each amount from 1 to target, try all coins and take min(dp[amount], dp[amount-coin]+1). Time: O(amount × coins), Space: O(amount).",
+      "keyPoints": [
+        "Classic unbounded knapsack / coin change problem",
+        "Bottom-up DP avoids recursion stack overflow for large amounts",
+        "Greedy doesn't work for arbitrary denominations (e.g., coins [1,3,4], amount 6)",
+        "Initialize with Infinity to detect impossible cases"
+      ],
+      "hints": [
+        "What's the base case? How many coins do you need to make amount 0?",
+        "For each coin, what subproblem does using that coin create?",
+        "Why doesn't a greedy approach (always pick largest coin) work?"
+      ],
+      "followUps": [
+        "How would you also track which coins were used (reconstruct the solution)?",
+        "What about counting the total number of ways to make the amount?",
+        "Can you optimize space if you only need the count, not the coin list?"
+      ]
+    },
+    {
+      "topic": "Dynamic Programming",
+      "subtopic": "String DP",
+      "difficulty": "hard",
+      "company": "Google",
+      "questionType": "coding",
+      "question": "Given two strings, find the length of their longest common subsequence (LCS). A subsequence is a sequence that can be derived by deleting some or no elements without changing the order.",
+      "expectedApproach": "2D DP table: dp[i][j] = LCS of first i chars of s1 and first j chars of s2. If chars match, dp[i][j] = dp[i-1][j-1] + 1. Else dp[i][j] = max(dp[i-1][j], dp[i][j-1]). Time: O(m×n), Space: O(m×n) or O(min(m,n)) with optimization.",
+      "keyPoints": [
+        "Foundation for diff algorithms and edit distance",
+        "Two choices when characters don't match: skip from either string",
+        "Can reconstruct actual LCS by backtracking through the table",
+        "Space optimization: only need previous row"
+      ],
+      "hints": [
+        "How does knowing the LCS of shorter prefixes help?",
+        "What happens when the current characters match vs don't match?",
+        "How many subproblems are there in total?"
+      ],
+      "followUps": [
+        "How would you find the actual LCS string, not just the length?",
+        "What's the relation between LCS and Edit Distance?",
+        "Can you solve this in O(n log n) for special cases?"
+      ]
+    },
+    {
+      "topic": "System Design Concepts",
+      "subtopic": "Scalability",
+      "difficulty": "hard",
+      "company": "Google",
+      "questionType": "system_design",
+      "question": "Design a URL shortener like bit.ly. Consider how to generate short URLs, handle high read/write traffic, and ensure analytics tracking.",
+      "expectedApproach": "Use a hash function or counter-based approach for short URL generation. Store mappings in a distributed key-value store. Use caching (Redis) for popular URLs. Handle collision resolution. Consider read-heavy workload (100:1 read/write ratio) and partition data for scale.",
+      "keyPoints": [
+        "Base62 encoding of auto-incrementing IDs (simple, no collisions)",
+        "MD5/SHA hash of original URL (need to handle collisions)",
+        "Read-heavy system: cache aggressively with Redis/Memcached",
+        "Analytics: async event processing with Kafka/message queue",
+        "Database: NoSQL (DynamoDB/Cassandra) or SQL with sharding",
+        "Consider TTL for link expiry"
+      ],
+      "hints": [
+        "How many URLs per day do you need to support?",
+        "What's the read to write ratio for a URL shortener?",
+        "How do you handle the same URL being shortened twice by different users?"
+      ],
+      "followUps": [
+        "How would you add real-time analytics (clicks per minute)?",
+        "How do you handle custom short URLs (vanity URLs)?",
+        "What happens when a short URL is clicked — walk through the entire request path"
+      ]
+    },
+    {
+      "topic": "Linked Lists",
+      "subtopic": "Reversal Patterns",
+      "difficulty": "medium",
+      "company": "Microsoft",
+      "questionType": "coding",
+      "question": "Reverse a linked list. Do it both iteratively and recursively. Then extend it to reverse nodes in groups of K.",
+      "expectedApproach": "Iterative: use three pointers (prev, curr, next). At each step, reverse curr's pointer and advance all three. Recursive: reverse rest of list, then fix pointers. For K-group: reverse first K nodes, recursively reverse rest, connect. Time: O(n), Space: O(1) iterative / O(n/k) for K-group.",
+      "keyPoints": [
+        "Three-pointer technique: prev, current, next",
+        "Recursive version builds reversed list on the call stack",
+        "K-group reversal: check if K nodes remain before reversing",
+        "Edge cases: empty list, single node, K > list length"
+      ],
+      "hints": [
+        "What three pieces of information do you need at each step?",
+        "In the recursive version, what does the recursive call return?",
+        "For K-group, what happens if the remaining nodes are less than K?"
+      ],
+      "followUps": [
+        "How would you reverse only the nodes between positions m and n?",
+        "Can you detect if a linked list has a cycle? Where does the cycle start?",
+        "How would you merge two sorted linked lists?"
+      ]
+    },
+    {
+      "topic": "Sorting & Searching",
+      "subtopic": "Binary Search Variants",
+      "difficulty": "medium",
+      "company": "Amazon",
+      "questionType": "coding",
+      "question": "Given a sorted array that has been rotated at some pivot, search for a target value. Return the index if found, otherwise return -1. Assume no duplicates.",
+      "expectedApproach": "Modified binary search: determine which half is sorted by comparing mid with left. If target is in the sorted half, search there; otherwise search the other half. Time: O(log n), Space: O(1).",
+      "keyPoints": [
+        "At least one half is always sorted after rotation",
+        "Determine sorted half by comparing nums[mid] with nums[left]",
+        "Check if target falls within sorted half's range",
+        "Handle edge case: array not actually rotated"
+      ],
+      "hints": [
+        "In a rotated sorted array, how many sorted portions exist?",
+        "How can you determine which half is sorted?",
+        "Once you know which half is sorted, how do you decide where to search?"
+      ],
+      "followUps": [
+        "What if the array contains duplicates?",
+        "How would you find the minimum element in a rotated sorted array?",
+        "Can you find the rotation point (pivot index)?"
+      ]
+    },
+    {
+      "topic": "Stacks & Queues",
+      "subtopic": "Monotonic Stack",
+      "difficulty": "medium",
+      "company": "Meta",
+      "questionType": "coding",
+      "question": "Given an array of integers representing daily temperatures, return an array where each element tells you how many days you need to wait until a warmer temperature. If no future warmer day exists, put 0.",
+      "expectedApproach": "Use a monotonic decreasing stack storing indices. For each temperature, while the stack is non-empty and current temp > stack top's temp, pop and calculate the difference in indices. Push current index. Time: O(n), Space: O(n).",
+      "keyPoints": [
+        "Monotonic stack pattern: stack maintains decreasing order",
+        "Store indices in stack, not values (need index to calculate days)",
+        "Each element is pushed and popped at most once → O(n)",
+        "Same pattern applies to: Next Greater Element, Largest Rectangle in Histogram"
+      ],
+      "hints": [
+        "What data structure helps you efficiently find the next greater element?",
+        "Why store indices instead of values in the stack?",
+        "What invariant should the stack maintain?"
+      ],
+      "followUps": [
+        "Can you solve 'Next Greater Element' using the same technique?",
+        "How would you find the Largest Rectangle in a Histogram?",
+        "What about a circular array version where the array wraps around?"
+      ]
+    },
+    {
+      "topic": "Hashing",
+      "subtopic": "HashMap Patterns",
+      "difficulty": "easy",
+      "company": "Microsoft",
+      "questionType": "coding",
+      "question": "Given an array of integers and a target sum, return the indices of the two numbers that add up to the target. Assume exactly one solution exists and you cannot use the same element twice.",
+      "expectedApproach": "Use a HashMap to store each number's complement (target - num) as you iterate. For each number, check if it exists as a key in the map. If yes, return both indices. Time: O(n), Space: O(n).",
+      "keyPoints": [
+        "HashMap gives O(1) lookup for complement",
+        "Single-pass solution: check and insert in the same loop",
+        "Edge case: same number appearing twice (e.g., [3,3], target=6)",
+        "Foundation concept used in many harder problems"
+      ],
+      "hints": [
+        "For each number, what value would you need to find to hit the target?",
+        "Can you avoid the O(n²) brute force with a lookup table?",
+        "Do you need to store all numbers first, or can you check as you go?"
+      ],
+      "followUps": [
+        "What if the array is sorted — can you do it without extra space?",
+        "What if there are multiple valid pairs — return all of them?",
+        "Extend this to Three Sum"
+      ]
+    },
+    {
+      "topic": "Recursion & Backtracking",
+      "subtopic": "Combinatorial",
+      "difficulty": "medium",
+      "company": "Google",
+      "questionType": "coding",
+      "question": "Given a set of distinct integers, return all possible subsets (the power set). The solution set must not contain duplicate subsets.",
+      "expectedApproach": "Backtracking: at each index, make two choices — include or exclude the current element. Build subsets incrementally. Alternatively, use bit manipulation: iterate from 0 to 2^n - 1, each bitmask represents a subset. Time: O(2^n × n), Space: O(2^n × n).",
+      "keyPoints": [
+        "Two standard approaches: backtracking or bit manipulation",
+        "Backtracking tree: each level is a decision (include/exclude)",
+        "For duplicates variant: sort first, skip consecutive equal elements",
+        "Total subsets: 2^n for n elements"
+      ],
+      "hints": [
+        "For each element, you have exactly two choices. What are they?",
+        "How does the recursion tree look? What's at each level?",
+        "Can you use bit manipulation to enumerate all subsets?"
+      ],
+      "followUps": [
+        "How would you handle duplicate elements in the input?",
+        "Generate all permutations instead of subsets",
+        "Generate all valid combinations of N pairs of parentheses"
+      ]
+    }
+  ]
+}

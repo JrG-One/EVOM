@@ -20,3 +20,21 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 503) {
+      if (
+        error.response.data?.code === "AI_QUOTA_EXCEEDED" ||
+        error.response.data?.code === "AI_SERVICE_DOWN"
+      ) {
+        window.dispatchEvent(
+          new CustomEvent("ai-agent-down", { detail: error.response.data })
+        );
+      }
+    }
+    return Promise.reject(error);
+  }
+);

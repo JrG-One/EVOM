@@ -11,4 +11,19 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    // We exclude lucide-react because it has 1400+ icons which can slow down 
+    // or even crash the dependency pre-bundling in some environments.
+    exclude: ['lucide-react'],
+    include: [
+      'react', 
+      'react-dom', 
+      'react-router-dom', 
+      'axios'
+    ]
+  },
+  server: {
+    port: 5173,
+    strictPort: true,
+  }
 })

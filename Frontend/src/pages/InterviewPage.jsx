@@ -40,7 +40,7 @@ const InterviewPage = () => {
 
   return (
     <div
-      className="h-screen flex flex-col bg-[#030303] text-white overflow-hidden"
+      className="h-screen flex flex-col bg-slate-950 text-slate-200 overflow-hidden dark"
       onClick={handleAudioUnlock}
     >
       <InterviewHeader
@@ -56,7 +56,7 @@ const InterviewPage = () => {
 
       <ResizablePanelGroup
         direction="horizontal"
-        className="flex-1 bg-black"
+        className="flex-1 bg-background"
         onLayout={(sizes) => setDefaultLayout(sizes)}
       >
         <ConversationPanel
@@ -66,7 +66,7 @@ const InterviewPage = () => {
 
         {currentQuestionType === "CODING" ? (
           <>
-            <ResizableHandle withHandle className="bg-white/5 border-none w-[1.5px] hover:bg-purple-500/50 transition-colors" />
+            <ResizableHandle withHandle className="bg-border border-none w-[1.5px] hover:bg-primary/50 transition-colors" />
             <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
               <CodeEditorWindow />
             </ResizablePanel>

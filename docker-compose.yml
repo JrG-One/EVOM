@@ -1,9 +1,7 @@
-version: '3.8'
 services:
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg16
     container_name: interviewwhiz_db
-    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mysecretpassword
@@ -12,11 +10,11 @@ services:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin_container
-    restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
@@ -24,6 +22,44 @@ services:
       - "5050:80"
     depends_on:
       - postgres
+    restart: always
+
+  backend:
+    build: 
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: interviewwhiz_backend
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - DATABASE_URL=postgresql://postgres:mysecretpassword@postgres:5432/interviewwhiz?schema=public
+      - ENABLE_FILE_UPLOADS=false
+    env_file:
+      - ./Backend/.env
+    depends_on:
+      - postgres
+    restart: always
+
+  coderunner:
+    build:
+      context: ./Microservices/code_runner
+      dockerfile: Dockerfile
+    container_name: interviewwhiz_coderunner
+    ports:
+      - "5002:5002"
+    restart: always
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: interviewwhiz_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
 
 volumes:
   postgres_data:

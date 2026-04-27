@@ -19,7 +19,7 @@ function Layout() {
         "--sidebar-width": "12rem",
         "--sidebar-width-mobile": "20rem",
       }}
-      className="bg-[#030303] dark"
+      className="bg-background"
       open={open}
       onOpenChange={setOpen}
     >

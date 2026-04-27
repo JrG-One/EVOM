@@ -4,7 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";  // Ensure this component exists
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import defaultAvatar from "@/assets/profile.png";
 
 const PersonalInfo = ({ atsScore }) => {
@@ -34,198 +35,174 @@ const PersonalInfo = ({ atsScore }) => {
     };
   };
 
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
   const handleSave = async () => {
     await updateProfile(formData);
     setIsEditing(false);
   };
 
   return (
-    <Card className="mb-6 bg-white/[0.02] border-white/5 backdrop-blur-3xl rounded-[2rem] overflow-hidden">
-      <CardContent className="pt-8 px-8">
-        <div className="flex flex-col md:flex-row justify-between gap-8">
-          <div className="flex flex-col gap-6 flex-1">
-            <div className="flex items-start md:items-center gap-6">
-              <div className="relative group">
-                <Avatar className="h-28 w-28 border-4 border-white/10 ring-4 ring-white/5 shadow-2xl">
-                  <AvatarImage src={authUser.profilePic || defaultAvatar} className="object-cover" />
-                  <AvatarFallback className="bg-gray-800 text-gray-400">
-                    <img
-                      src={defaultAvatar}
-                      alt="default avatar"
-                      className="h-full w-full object-cover rounded-full opacity-50"
-                    />
-                  </AvatarFallback>
-                </Avatar>
-                <div
-                  className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center cursor-pointer backdrop-blur-sm"
-                  onClick={handleButtonClick}
-                >
-                  <span className="text-white text-xs font-bold uppercase tracking-widest">Change</span>
+    <Card className="relative overflow-hidden border-border bg-card/50 backdrop-blur-2xl rounded-[2.5rem] shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] group transition-all duration-500">
+      {/* Dynamic Accent Glow */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 dark:bg-purple-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4 group-hover:bg-primary/10 transition-colors duration-1000" />
+      
+      <CardContent className="p-10 relative z-10">
+        <div className="flex flex-col xl:flex-row gap-12 items-start">
+          
+          {/* Identity Block */}
+          <div className="flex flex-col md:flex-row gap-8 flex-1">
+            <div className="relative">
+              <div className="h-36 w-36 rounded-[2.5rem] p-1 bg-gradient-to-br from-primary via-blue-500 to-emerald-500 animate-gradient-xy">
+                <div className="h-full w-full rounded-[2.3rem] overflow-hidden border-4 border-card bg-background flex items-center justify-center relative group/avatar">
+                  <Avatar className="h-full w-full rounded-none">
+                    <AvatarImage src={authUser.profilePic || defaultAvatar} className="object-cover" />
+                    <AvatarFallback className="bg-background">
+                      <img src={defaultAvatar} alt="default" className="w-16 h-16 opacity-20" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div 
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center cursor-pointer backdrop-blur-sm"
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Update</span>
+                  </div>
                 </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
               </div>
+              <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
+            </div>
 
-              <div className="flex-1 space-y-2">
-                {isEditing ? (
-                  <div className="space-y-3 max-w-md animate-in fade-in slide-in-from-left-4 duration-500">
-                    <Input
-                      value={formData.username}
-                      onChange={(e) =>
-                        setFormData({ ...formData, username: e.target.value })
-                      }
-                      placeholder="Full Name"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-blue-500/50 focus:ring-blue-500/20"
-                    />
+            <div className="flex-1 space-y-4">
+              {isEditing ? (
+                <div className="space-y-3 animate-in slide-in-from-left-4 duration-500">
+                  <Input
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    className="h-12 bg-background border-border text-foreground font-bold text-xl rounded-xl focus:ring-primary/20"
+                    placeholder="Full Name"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
                     <Input
                       value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
-                      placeholder="Phone Number"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-blue-500/50 focus:ring-blue-500/20"
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="bg-background border-border text-sm rounded-xl"
+                      placeholder="Phone"
                     />
                     <Input
                       value={formData.location}
-                      onChange={(e) =>
-                        setFormData({ ...formData, location: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      className="bg-background border-border text-sm rounded-xl"
                       placeholder="Location"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-blue-500/50 focus:ring-blue-500/20"
                     />
                   </div>
-                ) : (
-                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                    <h4 className="text-3xl font-black text-white tracking-tight mb-1">
+                </div>
+              ) : (
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-700">
+                  <div className="flex items-center gap-3 mb-1">
+                    <h1 className="text-4xl font-black text-foreground tracking-tight leading-none">
                       {authUser.username}
-                    </h4>
-                    <p className="text-gray-400 font-medium text-lg">{authUser.email}</p>
+                    </h1>
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] uppercase font-bold tracking-widest px-2">
+                      Active Candidate
+                    </Badge>
+                  </div>
+                  <p className="text-muted-foreground text-lg font-medium">{authUser.email}</p>
+                  
+                  <div className="flex flex-wrap gap-4 mt-6">
                     {authUser.phone && (
-                      <p className="text-gray-500 text-sm mt-1 flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-border text-muted-foreground text-xs font-bold shadow-sm">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                         {authUser.phone}
-                      </p>
+                      </div>
                     )}
                     {authUser.location && (
-                      <p className="text-gray-500 text-sm flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-border text-muted-foreground text-xs font-bold shadow-sm">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                         {authUser.location}
-                      </p>
+                      </div>
                     )}
                   </div>
+                </div>
+              )}
+
+              <div className="pt-4 border-t border-border">
+                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-2">Professional Brief</h5>
+                {isEditing ? (
+                  <Textarea
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    className="min-h-[80px] bg-background border-border text-foreground text-sm rounded-xl resize-none"
+                    placeholder="Your background..."
+                  />
+                ) : (
+                  <p className="text-muted-foreground text-sm leading-relaxed max-w-xl italic">
+                    "{authUser.bio || "No professional summary added yet. Introduce yourself to stand out."}"
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                {isEditing ? (
+                  <>
+                    <Button onClick={handleSave} disabled={isUpdatingProfile} className="bg-primary text-primary-foreground font-bold px-8 hover:opacity-90 rounded-xl transition-all active:scale-95">
+                      {isUpdatingProfile ? "Synchronizing..." : "Commit Changes"}
+                    </Button>
+                    <Button variant="ghost" onClick={() => setIsEditing(false)} className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl">
+                      Abort
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => setIsEditing(true)} variant="outline" className="border-border text-foreground hover:bg-accent rounded-xl px-6 h-10 text-xs font-bold uppercase tracking-widest shadow-sm">
+                    Edit Identity
+                  </Button>
                 )}
               </div>
             </div>
-
-            {/* Bio Section */}
-            <div className="space-y-3 p-4 rounded-xl bg-white/[0.03] border border-white/5">
-              <h5 className="font-bold text-gray-400 uppercase tracking-widest text-xs">About</h5>
-              {isEditing ? (
-                <Textarea
-                  value={formData.bio}
-                  onChange={(e) =>
-                    setFormData({ ...formData, bio: e.target.value })
-                  }
-                  placeholder="Tell us about yourself..."
-                  className="min-h-[100px] bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-blue-500/50 focus:ring-blue-500/20 resize-none"
-                />
-              ) : (
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  {authUser.bio || <span className="text-gray-600 italic">No bio added yet.</span>}
-                </p>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-2">
-              {isEditing ? (
-                <>
-                  <Button onClick={handleSave} disabled={isUpdatingProfile} className="bg-white text-black hover:bg-gray-200">
-                    {isUpdatingProfile ? "Saving..." : "Save Changes"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsEditing(false)}
-                    disabled={isUpdatingProfile}
-                    className="border-white/10 text-white hover:bg-white/5 hover:text-white"
-                  >
-                    Cancel
-                  </Button>
-                </>
-              ) : (
-                <Button onClick={() => setIsEditing(true)} variant="outline" className="border-white/10 text-white hover:bg-white/5 hover:text-white">
-                  Edit Profile
-                </Button>
-              )}
-            </div>
           </div>
 
-          {/* ATS Score Card */}
-          <div className="w-full md:w-auto">
-            <Card className="bg-gradient-to-br from-purple-900/40 to-blue-900/40 border-white/10 backdrop-blur-md rounded-[1.5rem] relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-12 bg-white/5 rounded-bl-[4rem] translate-x-8 -translate-y-8 blur-2xl group-hover:bg-purple-500/20 transition-colors duration-700" />
-              <CardContent className="p-8 relative z-10">
-                <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">
-                  ATS Score
-                </h2>
-                <div className="flex items-center gap-6">
-                  <div className="relative w-24 h-24 flex-shrink-0">
-                    <svg viewBox="0 0 36 36" className="w-24 h-24 transform -rotate-90">
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.1)"
-                        strokeWidth="3"
-                      />
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke={
-                          atsScore > 80
-                            ? "#34d399" // emerald-400
-                            : atsScore > 60
-                              ? "#fbbf24" // amber-400
-                              : "#f87171" // red-400
-                        }
-                        strokeWidth="3"
-                        strokeDasharray={`${authUser.atsScore}, 100`}
-                        strokeLinecap="round"
-                        className="drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-                      />
-                    </svg>
-                    <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center">
-                      <span className="text-3xl font-black text-white">
-                        {authUser.atsScore}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400 mb-1">Resume strength</p>
-                    <p className={`text-xl font-bold ${atsScore >= 80 ? "text-emerald-400" :
-                      atsScore >= 60 ? "text-amber-400" : "text-red-400"
-                      }`}>
-                      {authUser.atsScore >= 80
-                        ? "Excellent"
-                        : authUser.atsScore >= 70
-                          ? "Good"
-                          : authUser.atsScore >= 60
-                            ? "Average"
-                            : "Needs Work"}
-                    </p>
+          {/* Performance Radar / Score */}
+          <div className="w-full xl:w-72">
+            <div className="relative p-8 rounded-[2rem] bg-gradient-to-br from-card to-background border border-border overflow-hidden group/score shadow-xl transition-all duration-500">
+              <div className="absolute top-0 right-0 p-12 bg-primary/5 rounded-bl-[4rem] blur-2xl group-hover/score:bg-primary/10 transition-all duration-700" />
+              
+              <div className="relative z-10 flex flex-col items-center text-center">
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-6">ATS Intelligence</span>
+                
+                <div className="relative w-40 h-40 mb-6">
+                  <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+                    <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" className="text-muted/10" strokeWidth="2.5" />
+                    <circle 
+                      cx="18" cy="18" r="16" fill="none" 
+                      stroke="url(#atsGradient)" 
+                      strokeWidth="2.5" 
+                      strokeDasharray={`${authUser.atsScore}, 100`} 
+                      strokeLinecap="round"
+                      className="transition-all duration-1000 ease-out"
+                    />
+                    <defs>
+                      <linearGradient id="atsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="var(--primary)" />
+                        <stop offset="100%" stopColor="#3b82f6" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-5xl font-black text-foreground leading-none tabular-nums tracking-tighter">
+                      {authUser.atsScore}
+                    </span>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mt-1">Percentile</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                <Badge variant="outline" className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                  atsScore >= 80 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" :
+                  atsScore >= 60 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" :
+                  "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+                }`}>
+                  {atsScore >= 80 ? "Optimized" : atsScore >= 60 ? "Standard" : "Low Impact"}
+                </Badge>
+              </div>
+            </div>
           </div>
+
         </div>
       </CardContent>
     </Card>
@@ -233,3 +210,4 @@ const PersonalInfo = ({ atsScore }) => {
 };
 
 export default PersonalInfo;
+

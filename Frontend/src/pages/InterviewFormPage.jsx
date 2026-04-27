@@ -111,30 +111,30 @@ const InterviewForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#030303] text-white p-6 lg:p-10 font-sans selection:bg-purple-500/30 flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground p-6 lg:p-10 font-sans selection:bg-primary/30 flex items-center justify-center relative overflow-hidden">
       {/* Background Atmosphere */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse duration-[15s]" />
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px] animate-pulse duration-[15s]" />
       </div>
 
-      <Card className="relative z-10 w-full max-w-lg bg-white/[0.02] border-white/10 backdrop-blur-xl rounded-[2rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-700">
+      <Card className="relative z-10 w-full max-w-lg bg-card border border-border backdrop-blur-xl rounded-[2rem] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-700">
         <div className="p-8 pb-12">
           <Button
             onClick={() => navigate("/portal")}
             variant="ghost"
             size="icon"
-            className="absolute top-6 left-6 text-white/50 hover:text-white hover:bg-white/5 rounded-full"
+            className="absolute top-6 left-6 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full"
           >
             <ChevronLeft className="w-6 h-6" />
           </Button>
 
           <div className="text-center mb-8 mt-4">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-500/20 to-blue-500/20 text-purple-400 mb-4 ring-1 ring-white/10 shadow-lg">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-tr from-primary/20 to-secondary/20 text-primary mb-4 ring-1 ring-border shadow-lg">
               <Wand2 className="w-6 h-6" />
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-white mb-2">Configure Session</h2>
-            <p className="text-gray-400 text-sm">Customize your AI mock interview parameters</p>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2">Configure Session</h2>
+            <p className="text-muted-foreground text-sm">Customize your AI mock interview parameters</p>
           </div>
 
           <Form {...form}>
@@ -143,20 +143,20 @@ const InterviewForm = () => {
               {/* Company */}
               <FormField control={form.control} name="company" render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-medium text-gray-300 ml-1">Target Company</FormLabel>
+                  <FormLabel className="text-sm font-medium text-muted-foreground ml-1">Target Company</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:ring-purple-500/20 rounded-xl h-12 px-4 transition-all hover:bg-white/[0.07]">
+                      <SelectTrigger className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 rounded-xl h-12 px-4 transition-all hover:bg-accent/80">
                         <SelectValue placeholder="Select company" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-[#1a1a1a] border-white/10 text-white max-h-[280px]">
+                    <SelectContent className="bg-popover border-border text-popover-foreground max-h-[280px]">
                       {COMPANIES.map(comp => (
-                        <SelectItem key={comp} value={comp} className="focus:bg-purple-500/20 focus:text-white cursor-pointer">{comp}</SelectItem>
+                        <SelectItem key={comp} value={comp} className="focus:bg-primary/20 focus:text-foreground cursor-pointer">{comp}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-red-400 text-xs ml-1" />
+                  <FormMessage className="text-destructive text-xs ml-1" />
                 </FormItem>
               )} />
 
@@ -167,11 +167,11 @@ const InterviewForm = () => {
                     <FormControl>
                       <Input
                         placeholder="Enter company name"
-                        className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:ring-purple-500/20 rounded-xl h-12 px-4 transition-all hover:bg-white/[0.07]"
+                        className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 rounded-xl h-12 px-4 transition-all hover:bg-accent/80"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="text-red-400 text-xs ml-1" />
+                    <FormMessage className="text-destructive text-xs ml-1" />
                   </FormItem>
                 )} />
               )}
@@ -180,40 +180,40 @@ const InterviewForm = () => {
                 {/* Role */}
                 <FormField control={form.control} name="role" render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium text-gray-300 ml-1">Job Role</FormLabel>
+                    <FormLabel className="text-sm font-medium text-muted-foreground ml-1">Job Role</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:ring-purple-500/20 rounded-xl h-12 px-4 transition-all hover:bg-white/[0.07]">
+                        <SelectTrigger className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 rounded-xl h-12 px-4 transition-all hover:bg-accent/80">
                           <SelectValue placeholder="Select role" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-[#1a1a1a] border-white/10 text-white max-h-[280px]">
+                      <SelectContent className="bg-popover border-border text-popover-foreground max-h-[280px]">
                         {ROLES.map(role => (
-                          <SelectItem key={role} value={role} className="focus:bg-purple-500/20 focus:text-white cursor-pointer">{role}</SelectItem>
+                          <SelectItem key={role} value={role} className="focus:bg-primary/20 focus:text-foreground cursor-pointer">{role}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-red-400 text-xs ml-1" />
+                    <FormMessage className="text-destructive text-xs ml-1" />
                   </FormItem>
                 )} />
 
                 {/* Experience */}
                 <FormField control={form.control} name="experience" render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium text-gray-300 ml-1">Experience</FormLabel>
+                    <FormLabel className="text-sm font-medium text-muted-foreground ml-1">Experience</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:ring-purple-500/20 rounded-xl h-12 px-4 transition-all hover:bg-white/[0.07]">
+                        <SelectTrigger className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 rounded-xl h-12 px-4 transition-all hover:bg-accent/80">
                           <SelectValue placeholder="Select exp" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
+                      <SelectContent className="bg-popover border-border text-popover-foreground">
                         {EXPERIENCE_LEVELS.map(exp => (
-                          <SelectItem key={exp} value={exp} className="focus:bg-purple-500/20 focus:text-white cursor-pointer">{exp}</SelectItem>
+                          <SelectItem key={exp} value={exp} className="focus:bg-primary/20 focus:text-foreground cursor-pointer">{exp}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-red-400 text-xs ml-1" />
+                    <FormMessage className="text-destructive text-xs ml-1" />
                   </FormItem>
                 )} />
               </div>
@@ -225,11 +225,11 @@ const InterviewForm = () => {
                     <FormControl>
                       <Input
                         placeholder="Enter job role"
-                        className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:ring-purple-500/20 rounded-xl h-12 px-4 transition-all hover:bg-white/[0.07]"
+                        className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 rounded-xl h-12 px-4 transition-all hover:bg-accent/80"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="text-red-400 text-xs ml-1" />
+                    <FormMessage className="text-destructive text-xs ml-1" />
                   </FormItem>
                 )} />
               )}
@@ -237,20 +237,20 @@ const InterviewForm = () => {
               {/* Interview Type */}
               <FormField control={form.control} name="interviewType" render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-medium text-gray-300 ml-1">Interview Type</FormLabel>
+                  <FormLabel className="text-sm font-medium text-muted-foreground ml-1">Interview Type</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:ring-purple-500/20 rounded-xl h-12 px-4 transition-all hover:bg-white/[0.07]">
+                      <SelectTrigger className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 rounded-xl h-12 px-4 transition-all hover:bg-accent/80">
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
-                      <SelectItem value="Technical" className="focus:bg-purple-500/20 focus:text-white cursor-pointer">Technical</SelectItem>
-                      <SelectItem value="System Design" className="focus:bg-purple-500/20 focus:text-white cursor-pointer">System Design</SelectItem>
-                      <SelectItem value="Behavioural" className="focus:bg-purple-500/20 focus:text-white cursor-pointer">Behavioural</SelectItem>
+                    <SelectContent className="bg-popover border-border text-popover-foreground">
+                      <SelectItem value="Technical" className="focus:bg-primary/20 focus:text-foreground cursor-pointer">Technical</SelectItem>
+                      <SelectItem value="System Design" className="focus:bg-primary/20 focus:text-foreground cursor-pointer">System Design</SelectItem>
+                      <SelectItem value="Behavioural" className="focus:bg-primary/20 focus:text-foreground cursor-pointer">Behavioural</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-red-400 text-xs ml-1" />
+                  <FormMessage className="text-destructive text-xs ml-1" />
                 </FormItem>
               )} />
 
@@ -258,28 +258,28 @@ const InterviewForm = () => {
               {showLanguageInput && (
                 <FormField control={form.control} name="preferredLanguage" render={({ field }) => (
                   <FormItem className="space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
-                    <FormLabel className="text-sm font-medium text-gray-300 ml-1">Programming Language</FormLabel>
+                    <FormLabel className="text-sm font-medium text-muted-foreground ml-1">Programming Language</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:ring-purple-500/20 rounded-xl h-12 px-4 transition-all hover:bg-white/[0.07]">
+                        <SelectTrigger className="bg-accent/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 rounded-xl h-12 px-4 transition-all hover:bg-accent/80">
                           <SelectValue placeholder="Select language" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-[#1a1a1a] border-white/10 text-white">
-                        <SelectItem value="python" className="focus:bg-purple-500/20 focus:text-white cursor-pointer">Python</SelectItem>
-                        <SelectItem value="javascript" className="focus:bg-purple-500/20 focus:text-white cursor-pointer">JavaScript</SelectItem>
-                        <SelectItem value="java" className="focus:bg-purple-500/20 focus:text-white cursor-pointer">Java</SelectItem>
-                        <SelectItem value="cpp" className="focus:bg-purple-500/20 focus:text-white cursor-pointer">C++</SelectItem>
+                      <SelectContent className="bg-popover border-border text-popover-foreground">
+                        <SelectItem value="python" className="focus:bg-primary/20 focus:text-foreground cursor-pointer">Python</SelectItem>
+                        <SelectItem value="javascript" className="focus:bg-primary/20 focus:text-foreground cursor-pointer">JavaScript</SelectItem>
+                        <SelectItem value="java" className="focus:bg-primary/20 focus:text-foreground cursor-pointer">Java</SelectItem>
+                        <SelectItem value="cpp" className="focus:bg-primary/20 focus:text-foreground cursor-pointer">C++</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage className="text-red-400 text-xs ml-1" />
+                    <FormMessage className="text-destructive text-xs ml-1" />
                   </FormItem>
                 )} />
               )}
 
               <Button
                 type="submit"
-                className="w-full mt-6 bg-white text-black hover:bg-gray-200 h-12 rounded-xl font-bold text-lg shadow-xl shadow-purple-900/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full mt-6 bg-primary text-primary-foreground hover:opacity-90 h-12 rounded-xl font-bold text-lg shadow-xl shadow-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Sparkles className="w-5 h-5 mr-2" />
                 Start Simulation

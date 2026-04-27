@@ -106,7 +106,7 @@ export const useInterviewStore = create(
               || voices[0];
 
             if (preferredVoice) utterance.voice = preferredVoice;
-            utterance.rate = 1.0;
+            utterance.rate = 1.1;
             utterance.pitch = 1.0;
             utterance.volume = 1.0;
 
@@ -147,7 +147,7 @@ export const useInterviewStore = create(
 
       startInterview: async () => {
         set({ isLoading: true, nextQuestionReady: false, conversation: [], isVoiceMode: true });
-        const { formData } = get();
+        const { formData, interviewId } = get();
         const { role: jobRole, company: targetCompany, codingRound } = formData;
 
         const systemMessage = {
@@ -160,7 +160,10 @@ export const useInterviewStore = create(
         };
 
         try {
-          const response = await axiosInstance.post("/chat", { messages: [systemMessage, userMessage] });
+          const response = await axiosInstance.post("/chat", { 
+            interviewId: interviewId, 
+            message: `Introduce yourself as the elite interviewer and start the technical interview for ${jobRole} at ${targetCompany}. Welcome the candidate to the InterviewWhiz platform.` 
+          });
           const { cleanedReply, questionType, nextQuestionReady } = parseAIResponse(response.data.reply);
 
           set({
@@ -182,24 +185,20 @@ export const useInterviewStore = create(
         set({ generatingResponse: true });
 
         const userMsg = content.trim();
-        const { conversation } = get();
-        const { role: jobRole, company: targetCompany } = get().formData;
-
-        const systemMessage = {
-          role: "system",
-          content: `Experienced interviewer for ${jobRole} at ${targetCompany}. Use <<TYPE:THEORY>> or <<TYPE:CODING>>.`
-        };
+        const { conversation, interviewId } = get();
 
         const updatedConversation = [
-          ...conversation.filter(msg => msg.role !== 'system'),
-          systemMessage,
+          ...conversation,
           { role: "user", content: userMsg }
         ];
 
         set({ conversation: updatedConversation });
 
         try {
-          const response = await axiosInstance.post("/chat", { messages: updatedConversation });
+          const response = await axiosInstance.post("/chat", { 
+            interviewId: interviewId, 
+            message: userMsg 
+          });
           const { cleanedReply, questionType, interviewShouldEnd, nextQuestionReady } = parseAIResponse(response.data.reply);
 
           set((state) => ({
@@ -219,11 +218,14 @@ export const useInterviewStore = create(
 
       generateNewQuestion: async () => {
         set({ isLoading: true, nextQuestionReady: false });
-        const { conversation } = get();
+        const { conversation, interviewId } = get();
         const userMessage = { role: "user", content: "Proceed to the next question." };
 
         try {
-          const response = await axiosInstance.post("/chat", { messages: [...conversation, userMessage] });
+          const response = await axiosInstance.post("/chat", { 
+            interviewId: interviewId, 
+            message: "Proceed to the next question." 
+          });
           const { cleanedReply, questionType } = parseAIResponse(response.data.reply);
 
           set((state) => ({
@@ -240,13 +242,20 @@ export const useInterviewStore = create(
       },
 
       endInterview: async () => {
-        const { conversation, interviewId, formData } = get();
-        const feedback = conversation.map((msg) => `${msg.role.toUpperCase()}: ${msg.content}`).join("\n\n");
+        const { interviewId, sendMessage } = get();
         try {
-          const response = await axiosInstance.post("/portal/analysis", { interviewId, feedback, formData });
-          if (response.data.pdfUrl) window.open(response.data.pdfUrl, "_blank");
-          set({ analysisReport: response.data });
-        } catch (error) { }
+          // 1. Get a polite closing statement from the AI
+          await sendMessage("The candidate has requested to end the interview. Provide a polite closing statement like 'Thank you for your time. Please check your detailed report on your profile and feel free to practice more!' and tag it with <<END_INTERVIEW>>.");
+          
+          // 2. Trigger analysis after a brief delay to allow AI to speak
+          setTimeout(async () => {
+            const response = await axiosInstance.post("/portal/analysis", { interviewId });
+            if (response.data.pdfUrl) window.open(response.data.pdfUrl, "_blank");
+            set({ analysisReport: response.data });
+          }, 4000);
+        } catch (error) {
+          console.error("Error ending interview:", error);
+        }
       },
 
       fetchUserInterviews: async () => {
