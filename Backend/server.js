@@ -43,6 +43,8 @@ app.use(cookieParser());
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://www.entervue.ai",
+  "https://entervue.ai",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 

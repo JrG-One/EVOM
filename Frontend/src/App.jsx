@@ -75,16 +75,18 @@ function App() {
     },
     {
       path: "/",
-      element: authUser ? <Navigate to="/dashboard" replace /> : <LandingPageV2 />,
+      element: authUser ? <Layout /> : <LandingPageV2 />,
+      children: [
+        { index: true, element: authUser ? <DashboardPage /> : <LandingPageV2 /> },
+        { path: "dashboard", element: <PrivateRoute><DashboardPage /></PrivateRoute> },
+        { path: "profile", element: <PrivateRoute><ProfilePage /></PrivateRoute> },
+        { path: "resources", element: <PrivateRoute><ResourcePage /></PrivateRoute> },
+        { path: "portal", element: <PrivateRoute><PortalPage /></PrivateRoute> },
+        { path: "analyser", element: <PrivateRoute><ResumeAnalysisPage /></PrivateRoute> },
+      ],
     },
-    {
-      path: "/home",
-      element: <LandingPageV2 />,
-    },
-    {
-      path: "/evom",
-      element: <LandingPageV2 />,
-    },
+    { path: "/home", element: <LandingPageV2 /> },
+    { path: "/evom", element: <LandingPageV2 /> },
     {
       path: "/start-interview",
       element: (
@@ -92,60 +94,6 @@ function App() {
           <InterviewForm />
         </PrivateRoute>
       ),
-    },
-    {
-      path: "/",
-      element: <Layout />,
-      children: [
-        {
-          index: true,
-          element: (
-            <PrivateRoute>
-              <DashboardPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: "dashboard",
-          element: (
-            <PrivateRoute>
-              <DashboardPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: "profile",
-          element: (
-            <PrivateRoute>
-              <ProfilePage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: "resources",
-          element: (
-            <PrivateRoute>
-              <ResourcePage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: "portal",
-          element: (
-            <PrivateRoute>
-              <PortalPage />
-            </PrivateRoute>
-          ),
-        },
-        {
-          path: "analyser",
-          element: (
-            <PrivateRoute>
-              <ResumeAnalysisPage />
-            </PrivateRoute>
-          ),
-        },
-      ],
     },
     {
       path: "/interview",
