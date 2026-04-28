@@ -1,28 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { 
-  Eye, 
-  Target, 
-  Heart, 
-  Timer, 
-  Zap, 
-  Brain, 
-  X, 
-  Menu, 
-  Award, 
-  Shield, 
-  GraduationCap, 
-  Users, 
-  ArrowRight, 
-  Briefcase, 
-  Lock, 
-  Twitter, 
-  Linkedin, 
-  Github, 
-  Mail, 
-  Globe, 
-  CheckCircle2 
+import {
+    Eye,
+    Target,
+    Heart,
+    Timer,
+    Zap,
+    Brain,
+    X,
+    Menu,
+    Award,
+    Shield,
+    GraduationCap,
+    Users,
+    ArrowRight,
+    Briefcase,
+    Lock,
+    Twitter,
+    Linkedin,
+    Github,
+    Mail,
+    Globe,
+    CheckCircle2
 } from 'lucide-react';
 
 const LandingPageV2 = () => {
@@ -102,6 +102,30 @@ const LandingPageV2 = () => {
                         <ThemeToggle />
                         <button className="text-muted-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
+                </div>
+                {/* Mobile Menu Dropdown */}
+                <div
+                    className={`absolute top-full left-0 w-full bg-background/95 backdrop-blur-xl border-b border-border shadow-lg transition-all duration-300 origin-top overflow-hidden md:hidden ${mobileMenuOpen ? 'max-h-64 py-6 border-b' : 'max-h-0 py-0 border-transparent'
+                        }`}
+                >
+                    <div className="container mx-auto px-6 flex flex-col gap-6">
+                        <a
+                            href="#about"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors"
+                        >
+                            Our Story
+                        </a>
+                        <button
+                            onClick={() => {
+                                setMobileMenuOpen(false);
+                                navigate('/get-started');
+                            }}
+                            className="w-full px-6 py-3 rounded-xl bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-md shadow-primary/10"
+                        >
+                            Student Login
                         </button>
                     </div>
                 </div>
