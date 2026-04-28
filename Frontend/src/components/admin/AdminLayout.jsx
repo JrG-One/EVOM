@@ -40,14 +40,14 @@ const AdminLayout = () => {
             <div className={`p-6 flex items-center gap-4 border-b border-border/50 ${!isSidebarOpen && 'lg:justify-center lg:px-0'}`}>
                 <div className="relative group flex-shrink-0">
                     <div className={`rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm transition-all duration-500 overflow-hidden ${isSidebarOpen ? 'h-11 w-11' : 'h-10 w-10'}`}>
-                        <img 
-                            src="/EVOM-logo.png" 
-                            alt="EVOM" 
-                            className="w-[75%] h-[75%] object-contain" 
+                        <img
+                            src="/evomlogo.png"
+                            alt="EVOM"
+                            className="w-[75%] h-[75%] object-contain"
                         />
                     </div>
                 </div>
-                
+
                 {isSidebarOpen && (
                     <div className="flex flex-col animate-in fade-in slide-in-from-left-4 duration-500">
                         <span className="font-black tracking-tighter text-xl leading-none">
@@ -81,9 +81,9 @@ const AdminLayout = () => {
                             {isActive && isSidebarOpen && (
                                 <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full shadow-[0_0_10px_hsl(var(--primary))]" />
                             )}
-                            
+
                             <item.icon className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${isActive ? 'scale-110 text-primary' : 'group-hover:scale-110'}`} />
-                            
+
                             {isSidebarOpen && (
                                 <span className={`text-sm tracking-tight transition-all duration-300 ${isActive && 'translate-x-1'}`}>
                                     {item.name}
@@ -157,11 +157,11 @@ const AdminLayout = () => {
                 <header className="lg:hidden h-16 px-6 flex items-center justify-between bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-20">
                     <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm">
-                            <img src="/EVOM-logo.png" alt="EVOM" className="w-[70%] h-[70%] object-contain" />
+                            <img src="/evomlogo.png" alt="EVOM" className="w-[70%] h-[70%] object-contain" />
                         </div>
                         <span className="font-black tracking-tighter text-lg">Admin<span className="text-primary">Whiz</span></span>
                     </div>
-                    <button 
+                    <button
                         onClick={() => setIsMobileMenuOpen(true)}
                         className="p-2 hover:bg-accent rounded-xl transition-colors"
                     >

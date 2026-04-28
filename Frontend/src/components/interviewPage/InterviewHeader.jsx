@@ -1,19 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ChevronRight, CircleX, Maximize } from "lucide-react";
+import { CircleX, Maximize } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 
 const InterviewHeader = ({
-  generateNewQuestion,
   endInterview,
-  nextQuestionReady,
-  interviewShouldEnd,
   warnings = 0,
   isFullscreen = false,
   onEnterFullscreen,
   onExitFullscreen,
+  isSpeaking, // <-- Receive the prop
 }) => {
   const navigate = useNavigate();
 
@@ -71,23 +69,25 @@ const InterviewHeader = ({
             <TooltipTrigger asChild>
               <Button
                 onClick={handleEndInterview}
-                disabled={!interviewShouldEnd}
+                disabled={isSpeaking} // <-- Disable button while AI is talking
                 variant="ghost"
                 size="sm"
-                className={`rounded-xl px-4 font-bold text-xs uppercase tracking-wider transition-all duration-500 ${interviewShouldEnd
-                  ? "bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20"
-                  : "text-muted-foreground/20 cursor-not-allowed opacity-50"
-                  }`}
+                className={`rounded-xl px-4 font-bold text-xs uppercase tracking-wider transition-all duration-500 ${
+                  isSpeaking
+                    ? "bg-muted text-muted-foreground/50 border border-border/50 cursor-not-allowed" // Disabled styling
+                    : "bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20" // Active styling
+                }`}
               >
                 End Interview
                 <CircleX className="ml-2 h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            {!interviewShouldEnd && (
-              <TooltipContent className="bg-popover border-border text-muted-foreground text-xs shadow-2xl">
-                The interview is still in progress
-              </TooltipContent>
-            )}
+            <TooltipContent className="bg-popover border-border text-muted-foreground text-xs shadow-2xl">
+              {isSpeaking 
+                ? "Please wait for the AI to finish speaking" 
+                : "End the interview session and submit your responses"
+              }
+            </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>

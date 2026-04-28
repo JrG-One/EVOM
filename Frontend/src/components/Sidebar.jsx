@@ -1,9 +1,9 @@
-import { 
-  LogOut, 
-  Book, 
-  GraduationCap, 
-  SearchCodeIcon, 
-  LayoutDashboard, 
+import {
+  LogOut,
+  Book,
+  GraduationCap,
+  SearchCodeIcon,
+  LayoutDashboard,
   UserCircle,
   ChevronLeft,
   ChevronRight
@@ -42,8 +42,8 @@ export function AppSidebar() {
   const toggleSidebar = () => setOpen(state === "collapsed");
 
   return (
-    <Sidebar 
-      collapsible="icon" 
+    <Sidebar
+      collapsible="icon"
       className="border-r border-border bg-sidebar/95 backdrop-blur-xl transition-all duration-500"
     >
       {/* Floating Toggle Button */}
@@ -57,10 +57,10 @@ export function AppSidebar() {
       {/* Header Alignment Fix */}
       <SidebarHeader className={`py-4 transition-all duration-300 flex flex-row items-center ${isCollapsed ? "justify-center px-0" : "px-6"}`}>
         <div className={`relative flex-shrink-0 flex items-center justify-center rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm transition-all duration-500 ${isCollapsed ? "h-9 w-9" : "h-11 w-11"}`}>
-          <img 
-            src="/EVOM-logo.png" 
-            alt="EVOM" 
-            className="w-[75%] h-[75%] object-contain" 
+          <img
+            src="/evomlogo.png"
+            alt="EVOM"
+            className="w-[75%] h-[75%] object-contain"
           />
         </div>
 
@@ -83,9 +83,8 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       tooltip={item.title}
-                      className={`relative h-12 rounded-xl transition-all duration-300 ${
-                        isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
-                      } ${isCollapsed ? "justify-center px-0" : "px-3"}`}
+                      className={`relative h-12 rounded-xl transition-all duration-300 ${isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                        } ${isCollapsed ? "justify-center px-0" : "px-3"}`}
                     >
                       <Link to={item.url} className="flex items-center w-full">
                         <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'scale-110 text-primary' : ''}`} />
@@ -109,14 +108,14 @@ export function AppSidebar() {
       {/* Footer Alignment Fix */}
       <SidebarFooter className={`p-4 border-t border-border/50 flex flex-col gap-3 ${isCollapsed ? "items-center" : ""}`}>
         <div className={`flex items-center rounded-xl bg-accent/40 border border-border/50 transition-all ${isCollapsed ? "w-10 h-10 justify-center p-0" : "w-full p-2 gap-3"}`}>
-            <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs">
-                {authUser?.username?.[0]?.toUpperCase()}
+          <div className="w-8 h-8 flex-shrink-0 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs">
+            {authUser?.username?.[0]?.toUpperCase()}
+          </div>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-black truncate">{authUser?.username}</p>
             </div>
-            {!isCollapsed && (
-                <div className="flex-1 min-w-0">
-                    <p className="text-xs font-black truncate">{authUser?.username}</p>
-                </div>
-            )}
+          )}
         </div>
 
         <div className={`flex flex-col gap-1 w-full ${isCollapsed ? "items-center" : ""}`}>
@@ -124,7 +123,7 @@ export function AppSidebar() {
             <ThemeToggle />
             {!isCollapsed && <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Theme</span>}
           </div>
-          
+
           <button
             onClick={logout}
             className={`flex items-center rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all ${isCollapsed ? "justify-center w-10 h-10" : "px-3 py-2 gap-3"}`}

@@ -16,8 +16,8 @@ const NewIntPage = () => {
   const navigate = useNavigate();
   const {
     nextQuestionReady,
-    interviewShouldEnd,
-    generateNewQuestion, // call this on button click
+    // interviewShouldEnd, <-- You don't necessarily need this here anymore unless you use it elsewhere
+    generateNewQuestion, 
     endInterview,
   } = useInterviewStore();
 
@@ -41,10 +41,10 @@ const NewIntPage = () => {
             <ChevronRight />
           </Button>
 
+          {/* FIXED END INTERVIEW BUTTON */}
           <Button
             onClick={() => endInterview(navigate)}
-            disabled={!interviewShouldEnd}
-            variant={interviewShouldEnd ? "destructive" : "outline"}
+            variant="destructive"
           >
             End Interview
             <CircleX />
