@@ -26,9 +26,11 @@ const detectEndIntent = (message) => {
 
 const parseAIResponse = (rawReply) => {
   const nextQuestionReady = rawReply.includes("<<NEXT_QUESTION>>");
+  
+  // We determine explicit end states for internal logic, 
+  // but we will force interviewShouldEnd to true globally so the user can always exit.
   const explicitEnd = rawReply.includes("<<END_INTERVIEW>>");
   const implicitEnd = detectEndIntent(rawReply);
-  const interviewShouldEnd = explicitEnd || implicitEnd;
 
   let questionType = null;
   if (rawReply.includes("<<TYPE:CODING>>")) {
@@ -44,7 +46,8 @@ const parseAIResponse = (rawReply) => {
     .replace(/<<TYPE:THEORY>>/g, "")
     .trim();
 
-  return { cleanedReply, questionType, interviewShouldEnd, nextQuestionReady };
+  // Force interviewShouldEnd to true so the button is never locked
+  return { cleanedReply, questionType, interviewShouldEnd: true, nextQuestionReady, isNaturalEnd: explicitEnd || implicitEnd };
 };
 
 export const useInterviewStore = create(
@@ -61,7 +64,7 @@ export const useInterviewStore = create(
       interviewId: null,
       nextQuestionReady: false,
       analysisReport: null,
-      interviewShouldEnd: false,
+      interviewShouldEnd: true, // Default to true so it's always available
       generatingResponse: false,
       currentQuestionType: "THEORY",
       isLoading: false,
@@ -142,11 +145,12 @@ export const useInterviewStore = create(
           set({ isLoading: false });
         } catch (error) {
           set({ isLoading: false });
+          toast.error("Failed to set interview data.");
         }
       },
 
       startInterview: async () => {
-        set({ isLoading: true, nextQuestionReady: false, conversation: [], isVoiceMode: true });
+        set({ isLoading: true, nextQuestionReady: false, conversation: [], isVoiceMode: true, interviewShouldEnd: true });
         const { formData, interviewId } = get();
         const { role: jobRole, company: targetCompany, codingRound } = formData;
 
@@ -162,7 +166,7 @@ export const useInterviewStore = create(
         try {
           const response = await axiosInstance.post("/chat", { 
             interviewId: interviewId, 
-            message: `Introduce yourself as the elite interviewer and start the technical interview for ${jobRole} at ${targetCompany}. Welcome the candidate to the EVOM platform.` 
+            message: `Introduce yourself as the elite interviewer with name "EVOM AI" and start the technical interview for ${jobRole} at ${targetCompany}. Welcome the candidate to the EVOM platform.` 
           });
           const { cleanedReply, questionType, nextQuestionReady } = parseAIResponse(response.data.reply);
 
@@ -177,6 +181,7 @@ export const useInterviewStore = create(
           get().speakAIResponse(cleanedReply);
         } catch (e) {
           set({ isLoading: false });
+          toast.error("Failed to start the interview.");
         }
       },
 
@@ -199,12 +204,13 @@ export const useInterviewStore = create(
             interviewId: interviewId, 
             message: userMsg 
           });
-          const { cleanedReply, questionType, interviewShouldEnd, nextQuestionReady } = parseAIResponse(response.data.reply);
+          const { cleanedReply, questionType, nextQuestionReady } = parseAIResponse(response.data.reply);
 
           set((state) => ({
             conversation: [...state.conversation, { role: "assistant", content: cleanedReply }],
             nextQuestionReady,
-            interviewShouldEnd: interviewShouldEnd || state.interviewShouldEnd,
+            // Keep interviewShouldEnd true
+            interviewShouldEnd: true, 
             currentQuestionType: questionType || "THEORY",
           }));
 
@@ -244,17 +250,24 @@ export const useInterviewStore = create(
       endInterview: async () => {
         const { interviewId, sendMessage } = get();
         try {
+          toast.info("Ending interview and generating report...");
           // 1. Get a polite closing statement from the AI
           await sendMessage("The candidate has requested to end the interview. Provide a polite closing statement like 'Thank you for your time. Please check your detailed report on your profile and feel free to practice more!' and tag it with <<END_INTERVIEW>>.");
           
           // 2. Trigger analysis after a brief delay to allow AI to speak
           setTimeout(async () => {
-            const response = await axiosInstance.post("/portal/analysis", { interviewId });
-            if (response.data.pdfUrl) window.open(response.data.pdfUrl, "_blank");
-            set({ analysisReport: response.data });
+            try {
+                const response = await axiosInstance.post("/portal/analysis", { interviewId });
+                if (response.data.pdfUrl) window.open(response.data.pdfUrl, "_blank");
+                set({ analysisReport: response.data });
+            } catch (analysisError) {
+                console.error("Failed to generate analysis:", analysisError);
+                toast.error("Interview ended, but failed to generate the final report.");
+            }
           }, 4000);
         } catch (error) {
           console.error("Error ending interview:", error);
+          toast.error("Failed to end the interview cleanly.");
         }
       },
 
@@ -264,6 +277,7 @@ export const useInterviewStore = create(
           const res = await axiosInstance.get("/interview");
           set({ interviews: res.data });
         } catch (error) {
+            console.error("Failed to fetch interviews", error);
         } finally {
           set({ isLoading: false });
         }

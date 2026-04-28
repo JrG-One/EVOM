@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import ConversationPanel from "../components/interviewPage/ConservationPanel";
 import ResponsePanel from "../components/interviewPage/ResponsePanel";
@@ -15,20 +15,18 @@ const InterviewPage = () => {
     generateNewQuestion,
     generatingResponse,
     endInterview,
-    currentQuestionType, // P2: Get type
+    currentQuestionType,
+    isSpeaking, // <-- Extract isSpeaking state
   } = useInterviewStore();
 
   const { warnings, enterFullscreen, exitFullscreen, isFullscreen } = useProctoring();
 
-  // Prompt for fullscreen on load
-  React.useEffect(() => {
-    // Optional: Try to enter fullscreen automatically or show a toast suggesting it
+  // Prompt for fullscreen on load to secure the environment
+  useEffect(() => {
     enterFullscreen();
   }, [enterFullscreen]);
 
-  // const time = new Date();
-  // time.setSeconds(time.getSeconds() + 15);
-
+  // Unlock audio context on first user interaction (browser policy requirement)
   const handleAudioUnlock = () => {
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
@@ -52,6 +50,7 @@ const InterviewPage = () => {
         isFullscreen={isFullscreen}
         onEnterFullscreen={enterFullscreen}
         onExitFullscreen={exitFullscreen}
+        isSpeaking={isSpeaking} // <-- Pass it to the header
       />
 
       <ResizablePanelGroup
@@ -66,7 +65,10 @@ const InterviewPage = () => {
 
         {currentQuestionType === "CODING" ? (
           <>
-            <ResizableHandle withHandle className="bg-border border-none w-[1.5px] hover:bg-primary/50 transition-colors" />
+            <ResizableHandle 
+              withHandle 
+              className="bg-border border-none w-[2px] hover:bg-primary/50 transition-colors" 
+            />
             <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
               <CodeEditorWindow />
             </ResizablePanel>
