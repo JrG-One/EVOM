@@ -16,7 +16,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Brain, Mail, Lock, User, ArrowRight, Loader, Award, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader, Award, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
@@ -83,8 +83,9 @@ const LoginPage = () => {
               </div>
 
               <div className="relative group perspective-1000 mb-10">
-                <div className="p-8 bg-gradient-to-tr from-primary to-secondary rounded-[2.5rem] shadow-lg shadow-primary/20 transform group-hover:rotate-y-12 group-hover:scale-110 transition-all duration-1000 ease-out cursor-default">
-                  <Brain className="w-20 h-20 text-white drop-shadow-2xl" />
+                {/* REPLACED BRAIN ICON WITH EVOM LOGO (Desktop) */}
+                <div className="w-40 h-40 flex items-center justify-center bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[2.5rem] shadow-xl shadow-primary/20 transform group-hover:rotate-y-12 group-hover:scale-110 transition-all duration-1000 ease-out cursor-default overflow-hidden">
+                  <img src="/evomlogo.png" alt="EVOM Logo" className="w-[75%] h-[75%] object-contain" />
                 </div>
                 <div className="absolute -inset-4 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-[3rem] blur-2xl opacity-40 group-hover:opacity-70 transition duration-1000"></div>
               </div>
@@ -104,8 +105,9 @@ const LoginPage = () => {
         <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 lg:p-20 relative overflow-y-auto">
           {/* Logo/Branding (Mobile View Only) */}
           <div className="flex lg:hidden flex-col items-center mb-12 text-center">
-            <div className="p-4 bg-gradient-to-tr from-primary to-secondary rounded-2xl shadow-xl shadow-primary/20 mb-4">
-              <Brain className="w-8 h-8 text-white" />
+            {/* REPLACED BRAIN ICON WITH EVOM LOGO (Mobile) */}
+            <div className="w-16 h-16 flex items-center justify-center bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl shadow-primary/10 mb-4 overflow-hidden">
+              <img src="/EVOM-logo.png" alt="EVOM Logo" className="w-[70%] h-[70%] object-contain" />
             </div>
             <h1 className="text-4xl font-black tracking-tighter text-foreground">Entervue</h1>
           </div>
