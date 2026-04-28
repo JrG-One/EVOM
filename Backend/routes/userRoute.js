@@ -9,6 +9,7 @@ const {
   updateAtsScore,
 } = require("../controllers/userController");
 const {requireAuth} = require("../middleware/auth.middleware");
+const { userActivityTracker } = require("../middleware/userActivityTracker");
 
 //login
 router.post("/login", loginUser);
@@ -20,12 +21,12 @@ router.post("/signup", signupUser);
 router.post("/logout", logout);
 
 //update profile
-router.put("/update-profile", requireAuth, updateProfile);
+router.put("/update-profile", requireAuth, userActivityTracker, updateProfile);
 
 //update ats
-router.put("/update-ats-score", requireAuth, updateAtsScore);
+router.put("/update-ats-score", requireAuth, userActivityTracker, updateAtsScore);
 
 //checkAuth
-router.get("/check", requireAuth, checkAuth);
+router.get("/check", requireAuth, userActivityTracker, checkAuth);
 
 module.exports = router;

@@ -14,6 +14,49 @@ exports.generateChatResponse = async (req, res, next) => {
       return res.status(400).json({ error: "'interviewId' and 'message' are required." });
     }
 
+    const now = new Date();
+    const nextCycleEnd = new Date(now);
+    nextCycleEnd.setMonth(nextCycleEnd.getMonth() + 1);
+    let quota = await prisma.aICreditQuota.upsert({
+      where: { userId },
+      update: {},
+      create: {
+        userId,
+        plan: "FREE",
+        monthlyLimit: 1000,
+        usedThisCycle: 0,
+        cycleStart: now,
+        cycleEnd: nextCycleEnd,
+      },
+    });
+
+    if (quota.cycleEnd < now) {
+      quota = await prisma.aICreditQuota.update({
+        where: { userId },
+        data: {
+          usedThisCycle: 0,
+          cycleStart: now,
+          cycleEnd: nextCycleEnd,
+        },
+      });
+      await prisma.aICreditLedger.create({
+        data: {
+          userId,
+          changeType: "RESET",
+          delta: 0,
+          balanceAfter: quota.monthlyLimit,
+          source: "MONTHLY_RESET",
+        },
+      });
+    }
+
+    if (quota.usedThisCycle >= quota.monthlyLimit) {
+      return res.status(503).json({
+        error: "AI credits exhausted for the current billing cycle.",
+        code: "AI_CREDITS_EXHAUSTED",
+      });
+    }
+
     // Fetch the interview details
     const interview = await prisma.interview.findUnique({
       where: { id: interviewId },
@@ -62,10 +105,25 @@ exports.generateChatResponse = async (req, res, next) => {
     chatHistory.push({ role: "assistant", content: reply });
 
     // Save back to DB
-    await prisma.interview.update({
-      where: { id: interviewId },
-      data: { chatHistory: chatHistory },
-    });
+    await prisma.$transaction([
+      prisma.interview.update({
+        where: { id: interviewId },
+        data: { chatHistory: chatHistory },
+      }),
+      prisma.aICreditQuota.update({
+        where: { userId },
+        data: { usedThisCycle: { increment: 1 } },
+      }),
+      prisma.aICreditLedger.create({
+        data: {
+          userId,
+          changeType: "CONSUME",
+          delta: -1,
+          balanceAfter: quota.monthlyLimit - (quota.usedThisCycle + 1),
+          source: "CHAT_COMPLETION",
+        },
+      }),
+    ]);
 
     return res.json({ reply });
   } catch (error) {

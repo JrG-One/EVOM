@@ -28,7 +28,8 @@ axiosInstance.interceptors.response.use(
     if (error.response && error.response.status === 503) {
       if (
         error.response.data?.code === "AI_QUOTA_EXCEEDED" ||
-        error.response.data?.code === "AI_SERVICE_DOWN"
+        error.response.data?.code === "AI_SERVICE_DOWN" ||
+        error.response.data?.code === "AI_CREDITS_EXHAUSTED"
       ) {
         window.dispatchEvent(
           new CustomEvent("ai-agent-down", { detail: error.response.data })

@@ -30,6 +30,10 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminInterviews from "./pages/admin/AdminInterviews";
 import AdminResources from "./pages/admin/AdminResources";
+import AdminFeatureToggles from "./pages/admin/AdminFeatureToggles";
+import AdminUserLogs from "./pages/admin/AdminUserLogs";
+import AdminAICredits from "./pages/admin/AdminAICredits";
+import AdminExports from "./pages/admin/AdminExports";
 
 // Redirect logged-in users from public pages
 function PublicRoute({ children }) {
@@ -44,10 +48,10 @@ function PrivateRoute({ children }) {
   return authUser ? children : <Navigate to="/get-started" replace />;
 }
 
-// Protect routes that require Super Admin role
-function SuperAdminRoute({ children }) {
+// Protect routes that require admin access.
+function AdminRoute({ children }) {
   const { authUser } = useAuthStore();
-  return authUser?.role === "SUPERADMIN" ? (
+  return authUser?.role === "SUPERADMIN" || authUser?.role === "ADMIN" ? (
     children
   ) : (
     <Navigate to="/dashboard" replace />
@@ -110,9 +114,9 @@ function App() {
     {
       path: "/admin",
       element: (
-        <SuperAdminRoute>
+        <AdminRoute>
           <AdminLayout />
-        </SuperAdminRoute>
+        </AdminRoute>
       ),
       children: [
         {
@@ -120,12 +124,29 @@ function App() {
           element: <Navigate to="dashboard" replace />,
         },
         {
-          path: "dashboard",
+          path: "overview",
           element: <AdminDashboard />,
         },
+        { path: "dashboard", element: <Navigate to="/admin/overview" replace /> },
         {
           path: "users",
           element: <AdminUsers />,
+        },
+        {
+          path: "feature-toggles",
+          element: <AdminFeatureToggles />,
+        },
+        {
+          path: "logs",
+          element: <AdminUserLogs />,
+        },
+        {
+          path: "credits",
+          element: <AdminAICredits />,
+        },
+        {
+          path: "exports",
+          element: <AdminExports />,
         },
         {
           path: "interviews",

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
-    BookOpen,
     Trash2,
     Plus,
     Edit2,
@@ -11,6 +9,7 @@ import {
     Image as ImageIcon
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { axiosInstance } from '@/lib/axios';
 
 const AdminResources = () => {
     const [resources, setResources] = useState([]);
@@ -22,7 +21,7 @@ const AdminResources = () => {
     const fetchResources = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:3000/api/admin/resources', { withCredentials: true });
+            const response = await axiosInstance.get('/admin/resources');
             setResources(response.data);
         } catch (error) {
             toast.error("Failed to fetch resources");
@@ -39,10 +38,10 @@ const AdminResources = () => {
         e.preventDefault();
         try {
             if (isEditing) {
-                await axios.put(`http://localhost:3000/api/admin/resources/${isEditing}`, formData, { withCredentials: true });
+                await axiosInstance.put(`/admin/resources/${isEditing}`, formData);
                 toast.success("Resource updated");
             } else {
-                await axios.post('http://localhost:3000/api/admin/resources', formData, { withCredentials: true });
+                await axiosInstance.post('/admin/resources', formData);
                 toast.success("Resource added");
             }
             setFormData({ title: '', description: '', thumbnail: '', link: '' });
@@ -57,7 +56,7 @@ const AdminResources = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this resource?")) return;
         try {
-            await axios.delete(`http://localhost:3000/api/admin/resources/${id}`, { withCredentials: true });
+            await axiosInstance.delete(`/admin/resources/${id}`);
             toast.success("Resource deleted");
             fetchResources();
         } catch (error) {
@@ -90,7 +89,7 @@ const AdminResources = () => {
             </div>
 
             {showAddForm && (
-                <div className="p-8 rounded-[2.5rem] bg-[#0A0A0F]/60 border border-purple-500/20 backdrop-blur-xl animate-in slide-in-from-top-4 duration-500">
+                <div className="p-8 rounded-[2.5rem] bg-white dark:bg-[#0A0A0F]/60 border border-purple-500/20 backdrop-blur-xl animate-in slide-in-from-top-4 duration-500">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-bold">{isEditing ? 'Edit Resource' : 'Add New Resource'}</h2>
                         <button onClick={() => setShowAddForm(false)} className="p-2 hover:bg-white/5 rounded-full"><X className="w-5 h-5" /></button>
@@ -168,7 +167,7 @@ const AdminResources = () => {
                         <div key={i} className="h-[200px] rounded-[2rem] bg-white/5 animate-pulse" />
                     ))
                 ) : resources.map((res) => (
-                    <div key={res.id} className="group relative overflow-hidden rounded-[2.5rem] bg-[#0A0A0F]/60 border border-white/5 hover:border-purple-500/30 transition-all duration-500 backdrop-blur-xl">
+                    <div key={res.id} className="group relative overflow-hidden rounded-[2.5rem] bg-white dark:bg-[#0A0A0F]/60 border border-white/5 hover:border-purple-500/30 transition-all duration-500 backdrop-blur-xl">
                         <div className="aspect-video overflow-hidden">
                             <img src={res.thumbnail} alt={res.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60 group-hover:opacity-100" />
                         </div>

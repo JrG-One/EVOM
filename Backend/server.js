@@ -16,6 +16,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const logger = require("./utils/logger");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { startAdminRetentionJobs, stopAdminRetentionJobs } = require("./services/adminRetentionService");
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -101,6 +102,7 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   logger.info(`Server is running on port ${PORT}`);
+  startAdminRetentionJobs();
 });
 
 // ─── Graceful Shutdown ───────────────────────────────────────────
@@ -109,12 +111,14 @@ const { closePool } = require("./services/ragService");
 
 process.on("SIGTERM", async () => {
   logger.info("SIGTERM received. Closing connections...");
+  stopAdminRetentionJobs();
   await closePool();
   process.exit(0);
 });
 
 process.on("SIGINT", async () => {
   logger.info("SIGINT received. Closing connections...");
+  stopAdminRetentionJobs();
   await closePool();
   process.exit(0);
 });

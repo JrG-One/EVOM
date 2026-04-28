@@ -12,6 +12,27 @@ enum Role {
   SUPERADMIN
 }
 
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum CreditPlan {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum CreditChangeType {
+  INIT
+  CONSUME
+  ADJUST
+  RESET
+  TOPUP
+}
+
 model User {
   id         String   @id @default(uuid())
   username   String
@@ -34,10 +55,15 @@ model User {
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  status     UserStatus @default(ACTIVE)
   
   interviews Interview[]
   tokens     VerificationToken[]
   logs       AuditLog[]
+  featureFlags FeatureFlag[] @relation("FeatureFlagUpdatedBy")
+  activityLogs UserActivityLog[]
+  aiCreditQuota AICreditQuota?
+  aiCreditLedger AICreditLedger[]
 }
 
 model AuditLog {
@@ -48,6 +74,71 @@ model AuditLog {
   targetId  String?
   details   String?
   createdAt DateTime @default(now())
+}
+
+model FeatureFlag {
+  key         String   @id
+  enabled     Boolean  @default(true)
+  description String?
+  updatedById String?
+  updatedBy   User?    @relation("FeatureFlagUpdatedBy", fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+model UserActivityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType String
+  meta      Json?
+  ipHash    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+model AICreditQuota {
+  id           String     @id @default(uuid())
+  userId       String     @unique
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan         CreditPlan @default(FREE)
+  monthlyLimit Int        @default(1000)
+  usedThisCycle Int       @default(0)
+  cycleStart   DateTime   @default(now())
+  cycleEnd     DateTime
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([plan])
+  @@index([cycleEnd])
+}
+
+model AICreditLedger {
+  id           String           @id @default(uuid())
+  userId       String
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  changeType   CreditChangeType
+  delta        Int
+  balanceAfter Int
+  source       String?
+  createdAt    DateTime         @default(now())
+
+  @@index([userId, createdAt])
+  @@index([changeType, createdAt])
+}
+
+model DailyAdminMetric {
+  id                  String   @id @default(uuid())
+  date                DateTime @unique
+  activeUsers         Int      @default(0)
+  interviewsStarted   Int      @default(0)
+  interviewsCompleted Int      @default(0)
+  creditsConsumed     Int      @default(0)
+  failedEvents        Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 

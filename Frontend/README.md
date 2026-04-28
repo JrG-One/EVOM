@@ -1,19 +1,19 @@
-# InterviewWhiz – Your AI-Powered Mock Interview Platform
+# EVOM – Your AI-Powered Mock Interview Platform
 
-InterviewWhiz is an intelligent web platform designed to simulate real-life interview scenarios using pre-hosted Large Language Models (LLMs) like OpenAI's ChatGPT. It also offers a resume analysis tool and feedback mechanisms to help users prepare more efficiently and confidently for job interviews.
+EVOM is an intelligent web platform designed to simulate real-life interview scenarios using pre-hosted Large Language Models (LLMs) like OpenAI's ChatGPT. It also offers a resume analysis tool and feedback mechanisms to help users prepare more efficiently and confidently for job interviews.
 
 ---
 
 ## Project Overview
 
-*InterviewWhiz* provides:
+*EVOM* provides:
 
 - *Interactive mock sessions* powered by AI  
 - *Resume analysis* with actionable insights  
 - *Performance analytics and scores* to improve skills  
-- *User profiles* to track InterviewWhiz sessions and progress  
+- *User profiles* to track EVOM sessions and progress  
 - *Authentication system* with secure login/signup  
-- *Dashboard* to manage InterviewWhiz history and feedback  
+- *Dashboard* to manage EVOM history and feedback  
 
 This project is ideal for students, professionals, and job seekers who want to sharpen their skills through realistic, data-driven mock sessions.
 
@@ -23,7 +23,7 @@ This project is ideal for students, professionals, and job seekers who want to s
 |----------------------|-----------------------------------------------------------------------------|
 | AI Mock Sessions     | Interactive question-answer simulation with GPT-based responses             |
 | Resume Analyser      | Upload and get feedback on resume formatting, keywords, and structure       |
-| Profile Portal       | View personal info, performance scores, and InterviewWhiz history               |
+| Profile Portal       | View personal info, performance scores, and EVOM history               |
 | Real-time Scoring    | Analyze fluency, accuracy, clarity, and relevance of your responses         |
 | Secure Auth          | Login/signup with JWT-based authentication                                  |
 | User Dashboard       | Central hub with personalized performance summaries                         |
@@ -32,19 +32,19 @@ This project is ideal for students, professionals, and job seekers who want to s
 ## Folder Structure (Frontend)
 
 ```
-InterviewWhiz_Frontend/
+EVOM_Frontend/
 ├── public/            
 ├── src/                        # Main source code
 │   ├── assets/                 # Static images, logos, etc.
 │   ├── components/             # Reusable components
-│   │   ├── InterviewWhizPage/
+│   │   ├── EVOMPage/
 │   │   │   ├── ConservationPanel.jsx
-│   │   │   ├── InterviewWhizHeader.jsx
+│   │   │   ├── EVOMHeader.jsx
 │   │   │   ├── MessageBubble.jsx
 │   │   │   ├── ResponsePanel.jsx
 │   │   │   └── TypingIndicator.jsx
 │   │   ├── profilePage/
-│   │   │   ├── InterviewWhizStats.jsx
+│   │   │   ├── EVOMStats.jsx
 │   │   │   └── PersonalInfo.jsx
 │   │   ├── ResumeAnalyser/
 │   │   │   ├── AnalysisStatus.jsx
@@ -64,8 +64,8 @@ InterviewWhiz_Frontend/
 │   │   └── utils.js
 │   ├── pages/                  # Page components for routing
 │   │   ├── Homepage.jsx
-│   │   ├── InterviewWhizFormPage.jsx
-│   │   ├── InterviewWhizPage.jsx
+│   │   ├── EVOMFormPage.jsx
+│   │   ├── EVOMPage.jsx
 │   │   ├── LoginPage.jsx
 │   │   ├── PortalPage.jsx
 │   │   ├── ProfilePage.jsx
@@ -74,7 +74,7 @@ InterviewWhiz_Frontend/
 │   ├── store/                  # Zustand or global state
 │   │   ├── useAuthStore.js
 │   │   ├── useFormStore.js
-│   │   └── useInterviewWhizStore.js
+│   │   └── useEVOMStore.js
 │   ├── App.jsx
 │   ├── index.css
 │   ├── Layout.jsx
@@ -104,7 +104,7 @@ InterviewWhiz_Frontend/
 ### ☁ Backend (planned)
 - *Node.js* + *Express*
 - *MongoDB* for data storage (user, sessions, resume, results)
-- *Socket.io* for real-time InterviewWhiz interaction (future)
+- *Socket.io* for real-time EVOM interaction (future)
 - *JWT* for authentication
 
 ### AI Integration
@@ -119,7 +119,7 @@ InterviewWhiz_Frontend/
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/InterviewWhiz.git
+git clone https://github.com/your-username/EVOM.git
 
 # Install dependencies
 cd frontend
