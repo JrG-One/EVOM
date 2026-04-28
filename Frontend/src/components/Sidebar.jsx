@@ -8,7 +8,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -36,10 +36,17 @@ const items = [
 export function AppSidebar() {
   const { logout, authUser } = useAuthStore();
   const location = useLocation();
+  const navigate = useNavigate(); // <-- Added navigate hook
   const { state, setOpen } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   const toggleSidebar = () => setOpen(state === "collapsed");
+
+  // Custom handleLogout to combine actions
+  const handleLogout = async () => {
+    await logout(); // Ensure any API/state clearing is done
+    navigate('/get-started'); // Then redirect
+  };
 
   return (
     <Sidebar
@@ -125,7 +132,7 @@ export function AppSidebar() {
           </div>
 
           <button
-            onClick={logout}
+            onClick={handleLogout} // <-- Updated onClick handler
             className={`flex items-center rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all ${isCollapsed ? "justify-center w-10 h-10" : "px-3 py-2 gap-3"}`}
           >
             <LogOut className="w-4 h-4 flex-shrink-0" />

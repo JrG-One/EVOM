@@ -7,7 +7,6 @@ import {
     Heart,
     Timer,
     Zap,
-    Brain,
     X,
     Menu,
     Award,
@@ -75,8 +74,9 @@ const LandingPageV2 = () => {
             <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ${scrolled ? 'bg-background/70 backdrop-blur-2xl border-b border-border py-4 shadow-sm' : 'py-8 bg-transparent'}`}>
                 <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
                     <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/home')}>
-                        <div className="w-10 h-10 bg-gradient-to-tr from-primary to-secondary rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center group-hover:scale-105 transition-all duration-500">
-                            <Brain className="w-6 h-6 text-white" />
+                        {/* REPLACED BRAIN ICON WITH EVOM LOGO */}
+                        <div className="w-10 h-10 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl shadow-lg flex items-center justify-center group-hover:scale-105 transition-all duration-500 overflow-hidden">
+                            <img src="/evomlogo.png" alt="EVOM Logo" className="w-[70%] h-[70%] object-contain" />
                         </div>
                         <div className="flex flex-col text-left">
                             <span className="text-xl font-extrabold tracking-tighter text-foreground leading-none">
@@ -264,8 +264,9 @@ const LandingPageV2 = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-20 mb-16">
                         <div className="md:col-span-2 space-y-8 text-left">
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-gradient-to-tr from-primary to-secondary rounded-lg flex items-center justify-center shadow-md">
-                                    <Brain className="w-5 h-5 text-white" />
+                                {/* REPLACED BRAIN ICON WITH EVOM LOGO */}
+                                <div className="w-8 h-8 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg flex items-center justify-center shadow-md overflow-hidden">
+                                    <img src="/EVOM-logo.png" alt="EVOM Logo" className="w-[70%] h-[70%] object-contain" />
                                 </div>
                                 <span className="text-2xl font-extrabold tracking-tighter text-foreground">ENTERVUE</span>
                             </div>
