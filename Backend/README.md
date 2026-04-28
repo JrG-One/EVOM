@@ -1,4 +1,4 @@
-# **🔥 InterviewWhiz 🔥**  
+# **🔥 EVOM 🔥**  
 
 ## 🌍 Overview  
 Welcome to **Dev Heat Backend** – the powerhouse behind our interview management system! This backend is responsible for **user authentication, interview data handling, and email notifications**, ensuring a smooth experience for all users.  

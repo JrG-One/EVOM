@@ -129,4 +129,4 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 
 ---
 
-*Built with ❤️ by the InterviewWhiz Team*
+*Built with ❤️ by the EVOM Team*

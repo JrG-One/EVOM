@@ -162,7 +162,7 @@ export const useInterviewStore = create(
         try {
           const response = await axiosInstance.post("/chat", { 
             interviewId: interviewId, 
-            message: `Introduce yourself as the elite interviewer and start the technical interview for ${jobRole} at ${targetCompany}. Welcome the candidate to the InterviewWhiz platform.` 
+            message: `Introduce yourself as the elite interviewer and start the technical interview for ${jobRole} at ${targetCompany}. Welcome the candidate to the EVOM platform.` 
           });
           const { cleanedReply, questionType, nextQuestionReady } = parseAIResponse(response.data.reply);
 

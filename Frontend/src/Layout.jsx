@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Sidebar";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
@@ -26,7 +26,6 @@ function Layout() {
       <div className="flex w-full">
         <AppSidebar open={open} />
         <main className="flex-1">
-          <SidebarTrigger />
           <Outlet />
         </main>
       </div>

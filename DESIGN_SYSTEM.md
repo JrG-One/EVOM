@@ -1,6 +1,6 @@
-# InterviewWhiz - Design System & UI/UX Pro Max Guidelines
+# EVOM - Design System & UI/UX Pro Max Guidelines
 
-This document serves as the single source of truth for the **InterviewWhiz** design system. It follows the principles of the **UI/UX Pro Max** standards to ensure an accessible, high-performance, and visually elegant product.
+This document serves as the single source of truth for the **EVOM** design system. It follows the principles of the **UI/UX Pro Max** standards to ensure an accessible, high-performance, and visually elegant product.
 
 ## 1. Color Palette
 
